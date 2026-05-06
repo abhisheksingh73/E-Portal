@@ -20,8 +20,9 @@ class AdminController extends Controller
 
         $recentUsers = User::latest()->take(5)->get();
         $pendingSellers = User::where('role', 'seller')->where('is_approved', false)->get();
+        $activities = \App\Models\Activity::latest()->take(8)->get();
 
-        return view('admin.dashboard', compact('stats', 'recentUsers', 'pendingSellers'));
+        return view('admin.dashboard', compact('stats', 'recentUsers', 'pendingSellers', 'activities'));
     }
 
     public function users()
@@ -33,6 +34,13 @@ class AdminController extends Controller
     public function approveUser(User $user)
     {
         $user->update(['is_approved' => true]);
+
+        \App\Models\Activity::create([
+            'user_id' => auth()->id(),
+            'type' => 'approval',
+            'message' => "Administrator approved seller account: '{$user->name}'.",
+        ]);
+
         return back()->with('success', "User {$user->name} has been approved.");
     }
 

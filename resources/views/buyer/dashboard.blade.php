@@ -109,4 +109,44 @@
             @endforeach
         </div>
     </div>
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; margin-top: 32px;">
+        <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+            <div style="padding: 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-weight: 700; color: #1e293b;">Community Updates</h2>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #1a2a6c;">LATEST NEWS</span>
+            </div>
+            <div style="padding: 24px;">
+                @forelse($activities as $activity)
+                <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #f8fafc; border: 1px solid #eef2ff; display: flex; align-items: center; justify-content: center; color: #4338ca; font-size: 1rem;">
+                        <i class="fas {{ $activity->type == 'product_listing' ? 'fa-sparkles' : 'fa-info-circle' }}"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="font-size: 0.95rem; color: #475569; line-height: 1.5; margin-bottom: 4px;">{{ $activity->message }}</p>
+                        <span style="font-size: 0.8rem; color: #94a3b8;">{{ $activity->created_at->diffForHumans() }}</span>
+                    </div>
+                </div>
+                @empty
+                <div style="text-align: center; padding: 40px 0; color: #94a3b8;">
+                    <i class="fas fa-satellite" style="font-size: 2rem; margin-bottom: 12px; opacity: 0.2;"></i>
+                    <p>Marketplace updates will appear here.</p>
+                </div>
+                @endforelse
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div class="card" style="background: linear-gradient(135deg, #1a2a6c, #243b55); color: white; border: none; padding: 24px; box-shadow: 0 10px 30px rgba(26, 42, 108, 0.2);">
+                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 12px;">Loyalty Program</h3>
+                <p style="font-size: 0.85rem; font-weight: 400; line-height: 1.5; margin-bottom: 16px; opacity: 0.9;">You are only 250 points away from a <b>15% discount</b> on your next silk purchase!</p>
+                <button style="width: 100%; padding: 10px; background: white; color: #1a2a6c; border: none; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">View Rewards</button>
+            </div>
+
+            <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; padding: 24px;">
+                <div style="font-size: 2rem; margin-bottom: 12px;">🚚</div>
+                <h4 style="font-weight: 700; color: #1e293b; margin-bottom: 8px;">Free Delivery</h4>
+                <p style="font-size: 0.8rem; color: #94a3b8;">On all orders above ₹10,000 this weekend!</p>
+            </div>
+        </div>
+    </div>
 @endsection

@@ -84,62 +84,44 @@
     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
         <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
             <div style="padding: 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-size: 1.25rem; font-weight: 700; color: #1a2a6c;">Recent Sales</h2>
-                <a href="{{ route('seller.orders') }}" style="color: #4338ca; font-size: 0.9rem; font-weight: 700; text-decoration: none;">View All Orders</a>
+                <h2 style="font-weight: 700; color: #1e293b;">Market Activity Feed</h2>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #4338ca;">LIVE UPDATES</span>
             </div>
-            <div style="padding: 0 24px 24px 24px;">
-                <table style="width: 100%; border-collapse: collapse;">
-                    <thead>
-                        <tr style="text-align: left; border-bottom: 1px solid #f1f5f9;">
-                            <th style="padding: 16px 12px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">Product</th>
-                            <th style="padding: 16px 12px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">Amount</th>
-                            <th style="padding: 16px 12px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for($i = 1; $i <= 4; $i++)
-                        <tr style="border-bottom: 1px solid #f8fafc;">
-                            <td style="padding: 16px 12px;">
-                                <div style="font-weight: 600; color: #1e293b;">Kashmiri Woolen Wrap</div>
-                                <div style="font-size: 0.8rem; color: #94a3b8;">Order #{{ rand(1000, 9999) }}</div>
-                            </td>
-                            <td style="padding: 16px 12px; font-weight: 700; color: #1a2a6c;">₹5,400</td>
-                            <td style="padding: 16px 12px;">
-                                <span style="padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; background: #ecfdf5; color: #059669;">Delivered</span>
-                            </td>
-                        </tr>
-                        @endfor
-                    </tbody>
-                </table>
+            <div style="padding: 24px;">
+                @forelse($activities as $activity)
+                <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+                    <div style="width: 40px; height: 40px; border-radius: 12px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #1a2a6c; font-size: 1rem;">
+                        <i class="fas {{ $activity->type == 'product_listing' ? 'fa-tag' : ($activity->type == 'registration' ? 'fa-user-check' : 'fa-bell') }}"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <p style="font-size: 0.95rem; color: #1e293b; line-height: 1.5; margin-bottom: 4px;">{{ $activity->message }}</p>
+                        <span style="font-size: 0.8rem; color: #94a3b8;">{{ $activity->created_at->diffForHumans() }}</span>
+                    </div>
+                </div>
+                @empty
+                <div style="text-align: center; padding: 40px 0; color: #94a3b8;">
+                    <i class="fas fa-history" style="font-size: 2rem; margin-bottom: 12px; opacity: 0.2;"></i>
+                    <p>No recent platform activity found.</p>
+                </div>
+                @endforelse
             </div>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 24px;">
-            <div class="card" style="background: linear-gradient(135deg, #1a2a6c, #b21f1f); color: white; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;">Quick Inventory Alert</h3>
-                <div style="display: flex; gap: 12px; align-items: center; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; margin-bottom: 12px;">
-                    <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🧵</div>
-                    <div style="flex: 1;">
-                        <div style="font-size: 0.85rem; font-weight: 700;">Silk Yarn Blue</div>
-                        <div style="font-size: 0.75rem; opacity: 0.8;">Only 2 units left</div>
-                    </div>
-                    <button style="background: white; color: #b21f1f; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; cursor: pointer;">Refill</button>
-                </div>
+            <div class="card" style="background: linear-gradient(135deg, #1a2a6c, #243b55); color: white; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;">Quick Tip</h3>
+                <p style="font-size: 0.85rem; opacity: 0.8; line-height: 1.6;">Textiles with detailed 'Story' descriptions receive 45% more engagement. Update your product stories today!</p>
             </div>
 
             <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;">Upcoming Events</h3>
-                <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <div style="display: flex; gap: 12px; align-items: center;">
-                        <div style="width: 45px; height: 45px; background: #fef2f2; color: #ef4444; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <span style="font-size: 0.65rem; font-weight: 800;">MAY</span>
-                            <span style="font-size: 1rem; font-weight: 800;">12</span>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.9rem; font-weight: 700; color: #1e293b;">National Textile Expo</div>
-                            <div style="font-size: 0.75rem; color: #94a3b8;">Registration Open</div>
-                        </div>
-                    </div>
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;">System Health</h3>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                    <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
+                    <span style="font-size: 0.9rem; font-weight: 600;">Server Status: Optimal</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 10px; height: 10px; border-radius: 50%; background: #10b981;"></div>
+                    <span style="font-size: 0.9rem; font-weight: 600;">Payment Gateway: Active</span>
                 </div>
             </div>
         </div>

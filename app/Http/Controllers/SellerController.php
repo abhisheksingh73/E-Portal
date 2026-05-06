@@ -16,8 +16,10 @@ class SellerController extends Controller
             'pending_orders' => 5,
             'customer_rating' => '4.9/5',
         ];
+
+        $activities = \App\Models\Activity::latest()->take(6)->get();
         
-        return view('seller.dashboard', compact('stats'));
+        return view('seller.dashboard', compact('stats', 'activities'));
     }
 
     public function products(Request $request)
@@ -50,13 +52,19 @@ class SellerController extends Controller
             'category' => 'required|string',
         ]);
 
-        Product::create([
+        $product = Product::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
             'category' => $request->category,
             'user_id' => Auth::id(),
             'status' => 'active',
+        ]);
+
+        \App\Models\Activity::create([
+            'user_id' => Auth::id(),
+            'type' => 'product_listing',
+            'message' => "Seller listed a new textile: '{$product->name}'.",
         ]);
 
         return redirect()->route('seller.products')->with('success', 'Product listed successfully!');

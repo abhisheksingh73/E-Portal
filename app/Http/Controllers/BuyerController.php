@@ -15,8 +15,9 @@ class BuyerController extends Controller
         ];
 
         $recommendedProducts = \App\Models\Product::where('status', 'active')->take(3)->get();
+        $activities = \App\Models\Activity::latest()->take(5)->get();
         
-        return view('buyer.dashboard', compact('stats', 'recommendedProducts'));
+        return view('buyer.dashboard', compact('stats', 'recommendedProducts', 'activities'));
     }
 
     public function marketplace()

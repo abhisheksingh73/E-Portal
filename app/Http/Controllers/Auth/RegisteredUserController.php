@@ -46,6 +46,12 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        \App\Models\Activity::create([
+            'user_id' => $user->id,
+            'type' => 'registration',
+            'message' => "New " . ucfirst($user->role) . " '{$user->name}' joined the portal.",
+        ]);
+
         if ($user->role === 'seller') {
             return redirect()->route('login')->with('status', 'Your seller account has been created. Please wait for administrator approval before logging in.');
         }

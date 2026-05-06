@@ -192,41 +192,39 @@
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 24px;">
-            <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); background: linear-gradient(135deg, #1a2a6c, #243b55); color: white;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 16px;">System Performance</h3>
-                <div style="margin-bottom: 24px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="font-size: 0.85rem; font-weight: 500; opacity: 0.8;">Cloud Processing</span>
-                        <span style="font-size: 0.85rem; font-weight: 700;">88%</span>
-                    </div>
-                    <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
-                        <div style="width: 88%; height: 100%; background: #fdbb2d; box-shadow: 0 0 10px rgba(253, 187, 45, 0.5);"></div>
-                    </div>
+            <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); background: white;">
+                <div style="padding: 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: #1e293b;"><i class="fas fa-stream" style="color: #4338ca; margin-right: 8px;"></i> Live Activity Feed</h3>
+                    <span style="font-size: 0.7rem; font-weight: 800; background: #ecfdf5; color: #059669; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">Real-time</span>
                 </div>
-                <p style="font-size: 0.8rem; opacity: 0.7; line-height: 1.5;">The textile portal is currently operating at optimal capacity with no critical incidents reported in the last 24 hours.</p>
+                <div style="padding: 20px; max-height: 500px; overflow-y: auto;">
+                    @forelse($activities as $activity)
+                    <div style="display: flex; gap: 16px; margin-bottom: 20px; position: relative;">
+                        <div style="flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: {{ $activity->type == 'registration' ? '#eef2ff' : ($activity->type == 'approval' ? '#ecfdf5' : '#fffbeb') }}; display: flex; align-items: center; justify-content: center; color: {{ $activity->type == 'registration' ? '#4338ca' : ($activity->type == 'approval' ? '#059669' : '#b45309') }}; font-size: 0.9rem;">
+                            <i class="fas {{ $activity->type == 'registration' ? 'fa-user-plus' : ($activity->type == 'approval' ? 'fa-check-circle' : 'fa-box') }}"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <p style="font-size: 0.9rem; color: #1e293b; line-height: 1.4; margin-bottom: 4px;">{{ $activity->message }}</p>
+                            <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 500;">{{ $activity->created_at->diffForHumans() }}</span>
+                        </div>
+                    </div>
+                    @empty
+                    <div style="text-align: center; padding: 40px 0;">
+                        <i class="fas fa-history" style="font-size: 2rem; color: #e2e8f0; margin-bottom: 12px;"></i>
+                        <p style="color: #94a3b8; font-size: 0.9rem;">No recent activities logged.</p>
+                    </div>
+                    @endforelse
+                </div>
             </div>
 
-            <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 20px;">Top Seller Categories</h3>
-                <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 8px; height: 8px; border-radius: 50%; background: #4338ca;"></div>
-                        <span style="flex: 1; font-size: 0.9rem; font-weight: 500;">Handloom Silk</span>
-                        <span style="font-size: 0.9rem; font-weight: 700;">42%</span>
+            <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); background: linear-gradient(135deg, #1a2a6c, #243b55); color: white;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">Ministry Intelligence</h3>
+                <p style="font-size: 0.85rem; opacity: 0.8; line-height: 1.6; margin-bottom: 16px;">System monitoring active. High engagement detected in <b>Handloom Silk</b> categories this week.</p>
+                <div style="padding: 12px; background: rgba(255,255,255,0.1); border-radius: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 700;">
+                        <span>Uptime</span>
+                        <span>99.98%</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 8px; height: 8px; border-radius: 50%; background: #047857;"></div>
-                        <span style="flex: 1; font-size: 0.9rem; font-weight: 500;">Cotton Weaves</span>
-                        <span style="font-size: 0.9rem; font-weight: 700;">31%</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 8px; height: 8px; border-radius: 50%; background: #fdbb2d;"></div>
-                        <span style="flex: 1; font-size: 0.9rem; font-weight: 500;">Synthetic Blends</span>
-                        <span style="font-size: 0.9rem; font-weight: 700;">27%</span>
-                    </div>
-                </div>
-                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #f1f5f9; text-align: center;">
-                    <button style="background: none; border: none; color: #4338ca; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Detailed Market Report</button>
                 </div>
             </div>
         </div>
