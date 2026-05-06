@@ -1,0 +1,69 @@
+@extends('layouts.dashboard')
+
+@section('title', 'Received Orders')
+
+@section('sidebar_links')
+    <a href="{{ route('seller.dashboard') }}" class="nav-item">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="{{ route('seller.products') }}" class="nav-item">
+        <i class="fas fa-boxes"></i>
+        <span>My Inventory</span>
+    </a>
+    <a href="{{ route('seller.orders') }}" class="nav-item active">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Received Orders</span>
+    </a>
+    <a href="{{ route('seller.earnings') }}" class="nav-item">
+        <i class="fas fa-wallet"></i>
+        <span>Earnings</span>
+    </a>
+    <a href="{{ route('seller.settings') }}" class="nav-item">
+        <i class="fas fa-store"></i>
+        <span>Shop Settings</span>
+    </a>
+@endsection
+
+@section('content')
+    <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+        <div>
+            <h1 style="font-size: 2rem; font-weight: 800; color: #1a2a6c;">Received Orders</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Manage customer orders and fulfillment status.</p>
+        </div>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; background: #f8fafc; border-bottom: 1px solid #f1f5f9;">
+                    <th style="padding: 16px 24px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Order ID</th>
+                    <th style="padding: 16px 24px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Customer</th>
+                    <th style="padding: 16px 24px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Items</th>
+                    <th style="padding: 16px 24px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Total</th>
+                    <th style="padding: 16px 24px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">Status</th>
+                    <th style="padding: 16px 24px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 700; text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for($i = 1; $i <= 5; $i++)
+                <tr style="border-bottom: 1px solid #f8fafc;">
+                    <td style="padding: 20px 24px; font-weight: 700; color: #1e293b;">#ORD-{{ rand(10000, 99999) }}</td>
+                    <td style="padding: 20px 24px;">
+                        <div style="font-weight: 600; color: #1e293b;">Premium Boutique {{ $i }}</div>
+                        <div style="font-size: 0.8rem; color: #94a3b8;">Mumbai, MH</div>
+                    </td>
+                    <td style="padding: 20px 24px; color: #64748b; font-size: 0.9rem;">2x Silk Saree</td>
+                    <td style="padding: 20px 24px; font-weight: 700; color: #1a2a6c;">₹25,000</td>
+                    <td style="padding: 20px 24px;">
+                        <span style="padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; background: #fffbeb; color: #b45309;">PENDING</span>
+                    </td>
+                    <td style="padding: 20px 24px; text-align: center;">
+                        <button style="background: #1a2a6c; color: white; border: none; padding: 6px 16px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">Ship Now</button>
+                    </td>
+                </tr>
+                @endfor
+            </tbody>
+        </table>
+    </div>
+@endsection

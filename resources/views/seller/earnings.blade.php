@@ -1,0 +1,70 @@
+@extends('layouts.dashboard')
+
+@section('title', 'Earnings')
+
+@section('sidebar_links')
+    <a href="{{ route('seller.dashboard') }}" class="nav-item">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
+    </a>
+    <a href="{{ route('seller.products') }}" class="nav-item">
+        <i class="fas fa-boxes"></i>
+        <span>My Inventory</span>
+    </a>
+    <a href="{{ route('seller.orders') }}" class="nav-item">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Received Orders</span>
+    </a>
+    <a href="{{ route('seller.earnings') }}" class="nav-item active">
+        <i class="fas fa-wallet"></i>
+        <span>Earnings</span>
+    </a>
+    <a href="{{ route('seller.settings') }}" class="nav-item">
+        <i class="fas fa-store"></i>
+        <span>Shop Settings</span>
+    </a>
+@endsection
+
+@section('content')
+    <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+        <div>
+            <h1 style="font-size: 2rem; font-weight: 800; color: #1a2a6c;">Financial Overview</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Track your revenue, payouts, and settlements.</p>
+        </div>
+        <button style="background: #1a2a6c; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer;">
+            <i class="fas fa-file-invoice-dollar" style="margin-right: 8px;"></i> Download Statement
+        </button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 32px;">
+        <div class="card" style="background: linear-gradient(135deg, #1a2a6c, #243b55); color: white; border: none; padding: 32px;">
+            <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 8px;">Available for Payout</div>
+            <div style="font-size: 2.5rem; font-weight: 800; margin-bottom: 24px;">₹18,450</div>
+            <button style="width: 100%; padding: 14px; border-radius: 10px; border: none; background: #fdbb2d; color: #1a1a1a; font-weight: 800; font-size: 1rem; cursor: pointer;">Withdraw Funds</button>
+            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.85rem; opacity: 0.7;">
+                Next automated settlement on: <b>May 15, 2026</b>
+            </div>
+        </div>
+
+        <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 32px;">
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 24px;">Recent Transactions</h3>
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                @for($i = 1; $i <= 3; $i++)
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: 1px solid #f1f5f9;">
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #ecfdf5; color: #059669; display: flex; align-items: center; justify-content: center;"><i class="fas fa-arrow-down"></i></div>
+                        <div>
+                            <div style="font-weight: 700; color: #1e293b;">Sale Settlement #{{ rand(100, 999) }}</div>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">May 0{{ $i }}, 2026</div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 800; color: #059669;">+₹4,200</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8;">Completed</div>
+                    </div>
+                </div>
+                @endfor
+            </div>
+        </div>
+    </div>
+@endsection
