@@ -193,4 +193,16 @@ class SellerController extends Controller
 
         return back()->with('success', 'Inquiry status updated.');
     }
+
+    public function schemes()
+    {
+        $schemes = \App\Models\Scheme::where('status', 'active')->latest()->get();
+        return view('seller.schemes', compact('schemes'));
+    }
+
+    public function articles()
+    {
+        $articles = \App\Models\Article::where('status', 'published')->latest()->get();
+        return view('seller.articles', compact('articles'));
+    }
 }

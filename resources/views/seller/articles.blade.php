@@ -1,43 +1,47 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Textile Stories & Articles')
+@section('title', 'Textile Stories & Heritage')
 
 @section('sidebar_links')
-    <a href="{{ route('buyer.dashboard') }}" class="nav-item">
-        <i class="fas fa-home"></i>
-        <span>My Home</span>
+    <a href="{{ route('seller.dashboard') }}" class="nav-item">
+        <i class="fas fa-chart-line"></i>
+        <span>Dashboard</span>
     </a>
-    <a href="{{ route('buyer.marketplace') }}" class="nav-item">
-        <i class="fas fa-shopping-bag"></i>
-        <span>Marketplace</span>
+    <a href="{{ route('seller.products') }}" class="nav-item">
+        <i class="fas fa-boxes"></i>
+        <span>My Inventory</span>
     </a>
-    <a href="{{ route('buyer.orders') }}" class="nav-item">
-        <i class="fas fa-history"></i>
-        <span>My Orders</span>
+    <a href="{{ route('seller.orders') }}" class="nav-item">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Received Orders</span>
     </a>
-    <a href="{{ route('buyer.cart') }}" class="nav-item">
-        <i class="fas fa-shopping-cart"></i>
-        <span>Shopping Cart</span>
+    <a href="{{ route('seller.earnings') }}" class="nav-item">
+        <i class="fas fa-wallet"></i>
+        <span>Earnings</span>
     </a>
-    <a href="{{ route('buyer.wishlist') }}" class="nav-item">
-        <i class="fas fa-heart"></i>
-        <span>Wishlist</span>
+    <a href="{{ route('seller.inquiries') }}" class="nav-item">
+        <i class="fas fa-comments"></i>
+        <span>Customer Inquiries</span>
     </a>
-    <a href="{{ route('buyer.articles') }}" class="nav-item active">
+    <a href="{{ route('seller.settings') }}" class="nav-item">
+        <i class="fas fa-store"></i>
+        <span>Shop Settings</span>
+    </a>
+    <a href="{{ route('seller.schemes') }}" class="nav-item">
+        <i class="fas fa-file-invoice"></i>
+        <span>Govt Schemes</span>
+    </a>
+    <a href="{{ route('seller.articles') }}" class="nav-item active">
         <i class="fas fa-bullhorn"></i>
         <span>Textile Articles</span>
-    </a>
-    <a href="{{ route('buyer.settings') }}" class="nav-item">
-        <i class="fas fa-cog"></i>
-        <span>Settings</span>
     </a>
 @endsection
 
 @section('content')
     <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
         <div>
-            <h1 style="font-size: 2.5rem; font-weight: 800; color: #1a2a6c; font-family: 'Playfair Display', serif;">The Textile Chronicles</h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Discover the heritage, innovation, and stories behind Indian fabrics.</p>
+            <h1 style="font-size: 2.5rem; font-weight: 800; color: #1a2a6c;">Textile Articles</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Marketing trends, heritage stories, and industry news for producers.</p>
         </div>
     </div>
 
@@ -58,7 +62,7 @@
                 </div>
             </div>
             <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; margin-bottom: 16px;">{{ Str::limit($article->content, 120) }}</p>
-            <a href="#" style="color: #1a2a6c; font-weight: 800; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">Read Full Story <i class="fas fa-arrow-right"></i></a>
+            <a href="#" style="color: #1a2a6c; font-weight: 800; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">Read Full Article <i class="fas fa-arrow-right"></i></a>
         </div>
         @empty
         <div style="grid-column: 1 / -1; text-align: center; padding: 100px 0;">

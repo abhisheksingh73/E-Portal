@@ -81,6 +81,8 @@ Route::middleware('auth')->group(function () {
         Route::patch('/inquiries/{inquiry}/status', [SellerController::class, 'updateInquiryStatus'])->name('seller.inquiries.updateStatus');
         Route::get('/earnings', [SellerController::class, 'earnings'])->name('seller.earnings');
         Route::get('/settings', [SellerController::class, 'settings'])->name('seller.settings');
+        Route::get('/schemes', [SellerController::class, 'schemes'])->name('seller.schemes');
+        Route::get('/articles', [SellerController::class, 'articles'])->name('seller.articles');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
