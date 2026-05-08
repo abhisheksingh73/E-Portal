@@ -4,13 +4,13 @@
 
 The **E-Portal for Marketing** is a web-based application developed using Laravel and MySQL.
 It helps businesses promote their products/services digitally and allows users to explore marketing content through an interactive platform.
-
+It contains three roles Admin, Seller and Buyer.
 ---
 
 ## 🚀 Features
 
 * User Authentication (Login/Register/Logout)
-* Admin & User Roles
+* Admin, Seller and Buyer Roles
 * Product/Service Management (CRUD)
 * Marketing Content Management
 * Search & Filter Functionality
