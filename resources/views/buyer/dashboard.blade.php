@@ -15,9 +15,21 @@
         <i class="fas fa-history"></i>
         <span>My Orders</span>
     </a>
+    <a href="{{ route('buyer.cart') }}" class="nav-item">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Shopping Cart</span>
+    </a>
     <a href="{{ route('buyer.wishlist') }}" class="nav-item">
         <i class="fas fa-heart"></i>
         <span>Wishlist</span>
+    </a>
+    <a href="{{ route('buyer.schemes') }}" class="nav-item">
+        <i class="fas fa-file-invoice"></i>
+        <span>Govt Schemes</span>
+    </a>
+    <a href="{{ route('buyer.articles') }}" class="nav-item">
+        <i class="fas fa-bullhorn"></i>
+        <span>Textile Articles</span>
     </a>
     <a href="{{ route('buyer.settings') }}" class="nav-item">
         <i class="fas fa-cog"></i>
@@ -75,7 +87,7 @@
             </div>
             <div class="stat-info">
                 <h3>Total Spent</h3>
-                <p>₹1.2k</p>
+                <p>₹{{ number_format($stats['total_spent'] / 1000, 1) }}k</p>
                 <span style="color: #ca8a04; font-size: 0.8rem; font-weight: 700;">Lifetime savings</span>
             </div>
         </div>
@@ -92,7 +104,7 @@
                 <div style="height: 180px; background: #f8fafc; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
                     <span style="position: absolute; top: 12px; left: 12px; background: #1a2a6c; color: white; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 50px;">{{ $product->category }}</span>
                     @if($product->image)
-                        <img src="{{ $product->image }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
                         <i class="fas fa-image" style="font-size: 2.5rem; color: #cbd5e1;"></i>
                     @endif
@@ -102,7 +114,7 @@
                     <h4 style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 8px;">{{ $product->name }}</h4>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 1.25rem; font-weight: 800; color: #1a2a6c;">₹{{ number_format($product->price) }}</span>
-                        <button style="width: 36px; height: 36px; border-radius: 10px; border: none; background: #f1f5f9; color: #1a2a6c; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#1a2a6c'; this.style.color='white'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#1a2a6c'"><i class="fas fa-shopping-cart"></i></button>
+                        <button onclick="window.location.href='{{ route('buyer.marketplace') }}'" style="width: 36px; height: 36px; border-radius: 10px; border: none; background: #f1f5f9; color: #1a2a6c; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#1a2a6c'; this.style.color='white'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#1a2a6c'"><i class="fas fa-shopping-cart"></i></button>
                     </div>
                 </div>
             </div>

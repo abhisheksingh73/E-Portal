@@ -19,6 +19,10 @@
         <i class="fas fa-wallet"></i>
         <span>Earnings</span>
     </a>
+    <a href="{{ route('seller.inquiries') }}" class="nav-item">
+        <i class="fas fa-comments"></i>
+        <span>Customer Inquiries</span>
+    </a>
     <a href="{{ route('seller.settings') }}" class="nav-item">
         <i class="fas fa-store"></i>
         <span>Shop Settings</span>
@@ -80,9 +84,13 @@
                 <tr style="border-bottom: 1px solid #f8fafc; transition: background 0.3s;" onmouseover="this.style.background='#fcfdff'" onmouseout="this.style.background='transparent'">
                     <td style="padding: 20px 24px;">
                         <div style="display: flex; align-items: center; gap: 16px;">
-                            <div style="width: 44px; height: 44px; border-radius: 10px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #4338ca; font-weight: 700;">
-                                {{ strtoupper(substr($product->name, 0, 1)) }}
-                            </div>
+                            @if($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 44px; height: 44px; border-radius: 10px; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                            @else
+                                <div style="width: 44px; height: 44px; border-radius: 10px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #4338ca; font-weight: 700;">
+                                    {{ strtoupper(substr($product->name, 0, 1)) }}
+                                </div>
+                            @endif
                             <div>
                                 <div style="font-weight: 700; color: #1e293b;">{{ $product->name }}</div>
                                 <div style="font-size: 0.8rem; color: #94a3b8;">ID: #TXN-{{ $product->id }}</div>

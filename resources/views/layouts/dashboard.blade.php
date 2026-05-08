@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title') - E-Portal Marketing</title>
+    <title>@yield('title') - Textile Ministry E-Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
+            --primary: #1a2a6c;
+            --primary-hover: #243b55;
             --bg-main: #f8fafc;
             --bg-card: #ffffff;
             --text-dark: #1e293b;
@@ -287,17 +287,12 @@
 
     <aside class="sidebar">
         <div class="sidebar-header">
-            <div class="logo-box">M</div>
-            <span class="sidebar-title">E-Portal</span>
+            <div class="logo-box">T</div>
+            <span class="sidebar-title">Textile E-Portal</span>
         </div>
 
         <nav class="nav-links">
             @yield('sidebar_links')
-            
-            <a href="{{ route('profile.edit') }}" class="nav-item">
-                <i class="fas fa-user-cog"></i>
-                <span>Settings</span>
-            </a>
         </nav>
 
         <div class="btn-logout">

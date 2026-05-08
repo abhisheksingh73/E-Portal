@@ -17,6 +17,7 @@ class Product extends Model
         'status',
         'user_id',
         'image',
+        'is_featured',
     ];
 
     public function seller()

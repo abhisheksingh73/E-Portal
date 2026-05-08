@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Order;
+use App\Models\Inquiry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class SellerController extends Controller
 {
@@ -50,7 +53,13 @@ class SellerController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'category' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+        }
 
         $product = Product::create([
             'name' => $request->name,
@@ -59,6 +68,8 @@ class SellerController extends Controller
             'category' => $request->category,
             'user_id' => Auth::id(),
             'status' => 'active',
+            'image' => $imagePath,
+            'is_featured' => $request->has('is_featured'),
         ]);
 
         \App\Models\Activity::create([
@@ -90,9 +101,21 @@ class SellerController extends Controller
             'price' => 'required|numeric|min:0',
             'category' => 'required|string',
             'status' => 'required|in:active,out_of_stock,pending',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $product->update($request->all());
+        $data = $request->only(['name', 'description', 'price', 'category', 'status']);
+
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+            $data['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        $data['is_featured'] = $request->has('is_featured');
+        $product->update($data);
 
         return redirect()->route('seller.products')->with('success', 'Product updated successfully!');
     }
@@ -108,7 +131,33 @@ class SellerController extends Controller
 
     public function orders()
     {
-        return view('seller.orders.index');
+        $orders = Order::whereHas('product', function($query) {
+            $query->where('user_id', Auth::id());
+        })->with(['product', 'buyer'])->latest()->get();
+        
+        return view('seller.orders.index', compact('orders'));
+    }
+
+    public function updateOrderStatus(Request $request, Order $order)
+    {
+        // Security check: Order must belong to seller's product
+        if ($order->product->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'status' => 'required|in:pending,shipped,delivered,cancelled',
+        ]);
+
+        $order->update(['status' => $request->status]);
+
+        \App\Models\Activity::create([
+            'user_id' => Auth::id(),
+            'type' => 'order_status',
+            'message' => "Seller updated order #ORD-{$order->id} status to '{$request->status}'.",
+        ]);
+
+        return back()->with('success', "Order #ORD-{$order->id} status updated to " . strtoupper($request->status));
     }
 
     public function earnings()
@@ -119,5 +168,29 @@ class SellerController extends Controller
     public function settings()
     {
         return view('seller.settings');
+    }
+
+    public function inquiries()
+    {
+        $inquiries = Inquiry::where('seller_id', Auth::id())
+            ->with(['buyer', 'product'])
+            ->latest()
+            ->get();
+        return view('seller.inquiries.index', compact('inquiries'));
+    }
+
+    public function updateInquiryStatus(Request $request, Inquiry $inquiry)
+    {
+        if ($inquiry->seller_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'status' => 'required|in:unread,read,replied',
+        ]);
+
+        $inquiry->update(['status' => $request->status]);
+
+        return back()->with('success', 'Inquiry status updated.');
     }
 }

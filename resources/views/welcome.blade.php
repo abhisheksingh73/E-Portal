@@ -363,6 +363,10 @@
     </section>
 
     <section class="roles-section" id="roles">
+        <div style="text-align: center; margin-bottom: 60px;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 1rem;">Platform Ecosystem</h2>
+            <p style="color: rgba(255,255,255,0.6); max-width: 600px; margin: 0 auto;">Connecting every stakeholder in the Indian textile value chain through a specialized digital portal.</p>
+        </div>
         <div class="roles-grid">
             <div class="role-card">
                 <div class="role-icon float">🛡️</div>
@@ -379,6 +383,85 @@
                 <h3>Buyer</h3>
                 <p>Discover high-quality textiles, connect directly with sellers, and enjoy a seamless purchasing experience.</p>
             </div>
+        </div>
+    </section>
+
+    <!-- Featured Textiles Section -->
+    @if($featuredProducts->count() > 0)
+    <section style="padding: 100px 4rem; background: #050505;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 50px;">
+            <div>
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--accent);">Featured Masterpieces</h2>
+                <p style="color: rgba(255,255,255,0.6); margin-top: 10px;">Handpicked treasures from our finest regional artisans.</p>
+            </div>
+            <a href="{{ route('buyer.marketplace') }}" style="color: white; text-decoration: none; font-weight: 600; border-bottom: 2px solid var(--accent); padding-bottom: 5px;">View Marketplace</a>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+            @foreach($featuredProducts as $product)
+            <div class="role-card" style="padding: 0; text-align: left; overflow: hidden;">
+                <div style="height: 300px; background: #1a1a1a; overflow: hidden; position: relative;">
+                    @if($product->image)
+                        <img src="{{ asset('storage/' . $product->image) }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                    @else
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #333;">
+                            <i class="fas fa-image" style="font-size: 4rem;"></i>
+                        </div>
+                    @endif
+                    <div style="position: absolute; top: 15px; left: 15px; background: var(--accent); color: var(--text-dark); padding: 5px 12px; border-radius: 5px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase;">Featured</div>
+                </div>
+                <div style="padding: 25px;">
+                    <span style="color: var(--accent); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">{{ $product->category }}</span>
+                    <h4 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; margin: 8px 0;">{{ $product->name }}</h4>
+                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.5); margin-bottom: 20px;">{{ Str::limit($product->description, 60) }}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 1.2rem; font-weight: 700;">₹{{ number_format($product->price) }}</span>
+                        <a href="{{ route('buyer.marketplace') }}" style="background: rgba(255,255,255,0.1); color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">Details</a>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
+    <!-- Ministry Highlights (Articles) -->
+    @if($latestArticles->count() > 0)
+    <section style="padding: 100px 4rem; background: #0a0a0a;">
+        <div style="text-align: center; margin-bottom: 60px;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem;">Ministry Chronicles</h2>
+            <p style="color: rgba(255,255,255,0.6); margin-top: 10px;">Stories of heritage, innovation, and artisan empowerment.</p>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; max-width: 1400px; margin: 0 auto;">
+            @foreach($latestArticles as $article)
+            <div style="display: flex; flex-direction: column; gap: 20px; group">
+                <div style="height: 250px; border-radius: 20px; overflow: hidden; position: relative;">
+                    @if($article->image)
+                        <img src="{{ asset('storage/' . $article->image) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    @else
+                        <div style="width: 100%; height: 100%; background: #1a1a1a; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-newspaper" style="font-size: 3rem; color: #333;"></i>
+                        </div>
+                    @endif
+                </div>
+                <div>
+                    <span style="color: var(--accent); font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">{{ $article->category }}</span>
+                    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 10px 0; line-height: 1.3;">{{ $article->title }}</h3>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem; line-height: 1.6;">{{ Str::limit($article->content, 120) }}</p>
+                    <a href="{{ route('buyer.articles') }}" style="display: inline-block; margin-top: 15px; color: white; text-decoration: none; font-weight: 600; font-size: 0.9rem;">Read Full Story <i class="fas fa-arrow-right" style="margin-left: 8px; font-size: 0.8rem;"></i></a>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
+
+    <!-- Government Schemes Brief -->
+    <section style="padding: 100px 4rem; text-align: center; background: linear-gradient(to bottom, #0a0a0a, #050505);">
+        <div style="max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 60px; border-radius: 30px;">
+            <i class="fas fa-file-invoice" style="font-size: 3rem; color: var(--accent); margin-bottom: 25px;"></i>
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 20px;">Government Support & Schemes</h2>
+            <p style="color: rgba(255,255,255,0.7); line-height: 1.8; margin-bottom: 30px;">The Ministry of Textiles offers various schemes to support weavers, artisans, and MSMEs. From financial assistance to technology upgrades, explore how the government is empowering the industry.</p>
+            <a href="{{ route('buyer.schemes') }}" class="btn-primary">Explore All Schemes</a>
         </div>
     </section>
 

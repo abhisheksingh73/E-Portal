@@ -23,6 +23,14 @@
         <i class="fas fa-chart-line"></i>
         <span>Insights</span>
     </a>
+    <a href="{{ route('admin.schemes') }}" class="nav-item">
+        <i class="fas fa-file-invoice"></i>
+        <span>Govt Schemes</span>
+    </a>
+    <a href="{{ route('admin.articles') }}" class="nav-item">
+        <i class="fas fa-bullhorn"></i>
+        <span>Marketing Content</span>
+    </a>
 @endsection
 
 @section('content')

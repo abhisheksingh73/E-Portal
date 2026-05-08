@@ -19,6 +19,10 @@
         <i class="fas fa-wallet"></i>
         <span>Earnings</span>
     </a>
+    <a href="{{ route('seller.inquiries') }}" class="nav-item">
+        <i class="fas fa-comments"></i>
+        <span>Customer Inquiries</span>
+    </a>
     <a href="{{ route('seller.settings') }}" class="nav-item">
         <i class="fas fa-store"></i>
         <span>Shop Settings</span>
