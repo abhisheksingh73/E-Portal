@@ -65,8 +65,8 @@
                         <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px;">{{ Str::limit($scheme->description, 120) }}</p>
                     </div>
                     <div style="display: flex; gap: 12px;">
-                        <button style="flex: 1; background: #1a2a6c; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Learn More</button>
-                        <button style="width: 44px; height: 44px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; color: #1a2a6c; cursor: pointer;"><i class="fas fa-download"></i></button>
+                        <button onclick="showSchemeDetails('{{ addslashes($scheme->title) }}', '{{ addslashes($scheme->description) }}')" style="flex: 1; background: #1a2a6c; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Learn More</button>
+                        <button onclick="alert('Scheme document downloading...')" style="width: 44px; height: 44px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; color: #1a2a6c; cursor: pointer;"><i class="fas fa-download"></i></button>
                     </div>
                 </div>
             </div>
@@ -79,4 +79,23 @@
         </div>
         @endforelse
     </div>
+
+    <!-- Scheme Details Modal -->
+    <div id="schemeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: white; width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative;">
+            <button onclick="document.getElementById('schemeModal').style.display='none'" style="position: absolute; top: 24px; right: 24px; background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; color: #64748b; cursor: pointer;"><i class="fas fa-times"></i></button>
+            <h2 id="modalSchemeTitle" style="font-size: 1.75rem; font-weight: 800; color: #1a2a6c; margin-bottom: 16px;"></h2>
+            <div style="height: 4px; width: 60px; background: #fdbb2d; border-radius: 2px; margin-bottom: 24px;"></div>
+            <p id="modalSchemeDescription" style="color: #475569; line-height: 1.8; font-size: 1.1rem; margin-bottom: 32px;"></p>
+            <button onclick="document.getElementById('schemeModal').style.display='none'" style="width: 100%; background: #1a2a6c; color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer;">Close Details</button>
+        </div>
+    </div>
+
+    <script>
+        function showSchemeDetails(title, description) {
+            document.getElementById('modalSchemeTitle').innerText = title;
+            document.getElementById('modalSchemeDescription').innerText = description;
+            document.getElementById('schemeModal').style.display = 'flex';
+        }
+    </script>
 @endsection

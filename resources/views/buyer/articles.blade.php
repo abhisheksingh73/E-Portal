@@ -43,7 +43,7 @@
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 40px;">
         @forelse($articles as $article)
-        <div style="cursor: pointer; group" onmouseover="this.querySelector('img').style.transform='scale(1.05)'" onmouseout="this.querySelector('img').style.transform='scale(1)'">
+        <div onclick="showArticle('{{ addslashes($article->title) }}', '{{ addslashes($article->content) }}', '{{ $article->category }}')" style="cursor: pointer; group" onmouseover="this.querySelector('img').style.transform='scale(1.05)'" onmouseout="this.querySelector('img').style.transform='scale(1)'">
             <div style="border-radius: 24px; overflow: hidden; height: 350px; position: relative; margin-bottom: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
                 @if($article->image)
                     <img src="{{ asset('storage/' . $article->image) }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);">
@@ -58,7 +58,7 @@
                 </div>
             </div>
             <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; margin-bottom: 16px;">{{ Str::limit($article->content, 120) }}</p>
-            <a href="#" style="color: #1a2a6c; font-weight: 800; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">Read Full Story <i class="fas fa-arrow-right"></i></a>
+            <span style="color: #1a2a6c; font-weight: 800; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">Read Full Story <i class="fas fa-arrow-right"></i></span>
         </div>
         @empty
         <div style="grid-column: 1 / -1; text-align: center; padding: 100px 0;">
@@ -68,4 +68,31 @@
         </div>
         @endforelse
     </div>
+
+    <!-- Article Detail Modal -->
+    <div id="articleModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <div style="background: white; width: 700px; max-height: 85vh; border-radius: 32px; padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative; overflow-y: auto;">
+            <button onclick="document.getElementById('articleModal').style.display='none'" style="position: absolute; top: 32px; right: 32px; background: #f1f5f9; border: none; width: 44px; height: 44px; border-radius: 50%; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;"><i class="fas fa-times"></i></button>
+            
+            <div style="margin-bottom: 32px;">
+                <span id="modalArticleCategory" style="display: inline-block; background: #eef2ff; color: #4338ca; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; margin-bottom: 16px;"></span>
+                <h2 id="modalArticleTitle" style="font-size: 2.25rem; font-weight: 800; color: #1a2a6c; line-height: 1.2;"></h2>
+            </div>
+            
+            <div id="modalArticleContent" style="color: #475569; line-height: 1.8; font-size: 1.15rem; white-space: pre-wrap;"></div>
+            
+            <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid #f1f5f9;">
+                <button onclick="document.getElementById('articleModal').style.display='none'" style="width: 100%; background: #1a2a6c; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; cursor: pointer;">Close Article</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showArticle(title, content, category) {
+            document.getElementById('modalArticleTitle').innerText = title;
+            document.getElementById('modalArticleContent').innerText = content;
+            document.getElementById('modalArticleCategory').innerText = category;
+            document.getElementById('articleModal').style.display = 'flex';
+        }
+    </script>
 @endsection

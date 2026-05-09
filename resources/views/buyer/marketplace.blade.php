@@ -162,7 +162,7 @@
 
                 <div style="margin-bottom: 32px;">
                     <label style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 10px; font-size: 0.9rem;">Shipping Address</label>
-                    <textarea name="shipping_address" required rows="4" placeholder="Enter your full street address, city, and state..." style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s; resize: none;" onfocus="this.style.borderColor='#1a2a6c'"></textarea>
+                    <textarea name="shipping_address" required rows="4" placeholder="Enter your full street address, city, and state..." style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s; resize: none;" onfocus="this.style.borderColor='#1a2a6c'">{{ auth()->user()->address }}</textarea>
                 </div>
 
                 <button type="submit" style="width: 100%; background: #1a2a6c; color: white; border: none; padding: 18px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 1.1rem; box-shadow: 0 10px 15px -3px rgba(26, 42, 108, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 20px 25px -5px rgba(26, 42, 108, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 15px -3px rgba(26, 42, 108, 0.3)'">
