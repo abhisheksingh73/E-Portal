@@ -11,13 +11,13 @@
         <i class="fas fa-shopping-bag"></i>
         <span>Marketplace</span>
     </a>
-    <a href="{{ route('buyer.cart') }}" class="nav-item active">
-        <i class="fas fa-shopping-cart"></i>
-        <span>Shopping Cart</span>
-    </a>
     <a href="{{ route('buyer.orders') }}" class="nav-item">
         <i class="fas fa-history"></i>
         <span>My Orders</span>
+    </a>
+    <a href="{{ route('buyer.cart') }}" class="nav-item active">
+        <i class="fas fa-shopping-cart"></i>
+        <span>Shopping Cart</span>
     </a>
     <a href="{{ route('buyer.wishlist') }}" class="nav-item">
         <i class="fas fa-heart"></i>
@@ -26,6 +26,10 @@
     <a href="{{ route('buyer.articles') }}" class="nav-item">
         <i class="fas fa-bullhorn"></i>
         <span>Textile Articles</span>
+    </a>
+    <a href="{{ route('buyer.schemes') }}" class="nav-item">
+        <i class="fas fa-file-invoice"></i>
+        <span>Govt Schemes</span>
     </a>
     <a href="{{ route('buyer.settings') }}" class="nav-item">
         <i class="fas fa-cog"></i>
@@ -198,25 +202,22 @@
                     <div style="margin-bottom: 32px;">
                         <label style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 12px; font-size: 0.9rem;">Payment Method</label>
                         <div style="display: grid; gap: 12px;">
-                            <label style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.3s;" class="pay-method" onclick="selectMethod(this)">
+                            <label style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #1a2a6c; background: #eef2ff; border-radius: 12px; cursor: pointer;">
                                 <input type="radio" name="payment_method" value="cod" checked style="accent-color: #1a2a6c; width: 20px; height: 20px;">
                                 <div>
                                     <div style="font-weight: 700; color: #1e293b;">Cash on Delivery (COD)</div>
                                     <div style="font-size: 0.8rem; color: #64748b;">Pay when you receive the package</div>
                                 </div>
                             </label>
-                            <label style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.3s;" class="pay-method" onclick="selectMethod(this)">
-                                <input type="radio" name="payment_method" value="online" style="accent-color: #1a2a6c; width: 20px; height: 20px;">
-                                <div>
-                                    <div style="font-weight: 700; color: #1e293b;">Online Payment</div>
-                                    <div style="font-size: 0.8rem; color: #64748b;">Credit/Debit Card, UPI, Net Banking</div>
-                                </div>
-                            </label>
+                            <div style="padding: 12px; background: #f8fafc; border-radius: 10px; border: 1px dashed #e2e8f0; display: flex; align-items: center; gap: 10px; color: #94a3b8; font-size: 0.8rem;">
+                                <i class="fas fa-info-circle"></i>
+                                Online payments are currently disabled for maintenance.
+                            </div>
                         </div>
                     </div>
 
                     <button type="submit" style="width: 100%; background: #1a2a6c; color: white; border: none; padding: 18px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 1.1rem; box-shadow: 0 10px 15px -3px rgba(26, 42, 108, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                        Secure Checkout
+                        Confirm COD Order
                     </button>
                 </form>
 

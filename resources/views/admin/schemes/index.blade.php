@@ -40,6 +40,12 @@
             <p style="color: var(--text-muted); font-size: 1.1rem;">Post and manage Ministry initiatives for weavers and businesses.</p>
         </div>
         <div style="display: flex; gap: 12px;">
+            <form action="{{ route('admin.schemes') }}" method="GET" style="display: flex; gap: 12px;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search schemes..." style="padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; width: 220px;">
+                @if(request()->filled('search'))
+                    <a href="{{ route('admin.schemes') }}" style="background: white; color: #ef4444; border: 1px solid #ef4444; padding: 12px; border-radius: 12px; display: flex; align-items: center; text-decoration: none;"><i class="fas fa-times"></i></a>
+                @endif
+            </form>
             <a href="{{ route('admin.schemes.applications') }}" style="background: #f1f5f9; color: #1a2a6c; text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
                 <i class="fas fa-inbox"></i> View Applications
             </a>

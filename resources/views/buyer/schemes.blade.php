@@ -23,13 +23,13 @@
         <i class="fas fa-heart"></i>
         <span>Wishlist</span>
     </a>
-    <a href="{{ route('buyer.schemes') }}" class="nav-item active">
-        <i class="fas fa-file-invoice"></i>
-        <span>Govt Schemes</span>
-    </a>
     <a href="{{ route('buyer.articles') }}" class="nav-item">
         <i class="fas fa-bullhorn"></i>
         <span>Textile Articles</span>
+    </a>
+    <a href="{{ route('buyer.schemes') }}" class="nav-item active">
+        <i class="fas fa-file-invoice"></i>
+        <span>Govt Schemes</span>
     </a>
     <a href="{{ route('buyer.settings') }}" class="nav-item">
         <i class="fas fa-cog"></i>

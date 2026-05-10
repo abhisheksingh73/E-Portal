@@ -43,6 +43,20 @@
             <h1 style="font-size: 2rem; font-weight: 800; color: #1a2a6c;">Customer Inquiries</h1>
             <p style="color: var(--text-muted); font-size: 1.1rem;">Respond to messages from buyers interested in your textiles.</p>
         </div>
+        <div style="display: flex; gap: 12px;">
+            <form action="{{ route('seller.inquiries') }}" method="GET" style="display: flex; gap: 12px;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search messages..." style="padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; width: 220px;">
+                <select name="status" onchange="this.form.submit()" style="padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; background: white; cursor: pointer; color: #64748b; font-weight: 600;">
+                    <option value="">All Statuses</option>
+                    <option value="unread" {{ request('status') == 'unread' ? 'selected' : '' }}>Unread</option>
+                    <option value="read" {{ request('status') == 'read' ? 'selected' : '' }}>Read</option>
+                    <option value="replied" {{ request('status') == 'replied' ? 'selected' : '' }}>Replied</option>
+                </select>
+                @if(request()->filled('search') || request()->filled('status'))
+                    <a href="{{ route('seller.inquiries') }}" style="background: white; color: #ef4444; border: 1px solid #ef4444; padding: 12px; border-radius: 12px; display: flex; align-items: center; text-decoration: none;"><i class="fas fa-times"></i></a>
+                @endif
+            </form>
+        </div>
     </div>
 
     @if(session('success'))

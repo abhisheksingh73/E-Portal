@@ -16,20 +16,23 @@ class SellerController extends Controller
         $userId = Auth::id();
         
         $stats = [
-            'total_sales' => Order::whereHas('product', function($q) use ($userId) {
+            'total_earnings' => Order::whereHas('product', function($q) use ($userId) {
                     $q->where('user_id', $userId);
                 })->where('payment_status', 'paid')->sum('total_price'),
             'active_listings' => Product::where('user_id', $userId)->where('status', 'active')->count(),
             'pending_orders' => Order::whereHas('product', function($q) use ($userId) {
                     $q->where('user_id', $userId);
                 })->where('status', 'pending')->count(),
-            'customer_rating' => '4.9/5', // Static for now
+            'unread_inquiries' => Inquiry::where('seller_id', $userId)->where('status', 'unread')->count(),
+            'total_orders' => Order::whereHas('product', function($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                })->count(),
         ];
 
         $activities = \App\Models\Activity::where('user_id', $userId)
             ->orWhereNull('user_id')
             ->latest()
-            ->take(6)
+            ->take(8)
             ->get();
             
         return view('seller.dashboard', compact('stats', 'activities'));
@@ -37,17 +40,17 @@ class SellerController extends Controller
 
     public function products(Request $request)
     {
-        $query = Product::where('user_id', Auth::id());
+        $query = Product::where('user_id', Auth::id())->latest();
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->has('category') && $request->category != '') {
+        if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
 
-        $products = $query->latest()->get();
+        $products = $query->paginate(10)->withQueryString();
         return view('seller.products.index', compact('products'));
     }
 

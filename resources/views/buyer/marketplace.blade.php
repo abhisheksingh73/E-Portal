@@ -27,6 +27,10 @@
         <i class="fas fa-bullhorn"></i>
         <span>Textile Articles</span>
     </a>
+    <a href="{{ route('buyer.schemes') }}" class="nav-item">
+        <i class="fas fa-file-invoice"></i>
+        <span>Govt Schemes</span>
+    </a>
     <a href="{{ route('buyer.settings') }}" class="nav-item">
         <i class="fas fa-cog"></i>
         <span>Settings</span>
@@ -179,15 +183,14 @@
 
                 <div style="margin-bottom: 32px;">
                     <label style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 12px; font-size: 0.9rem;">Payment Method</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <label style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 2px solid #1a2a6c; border-radius: 12px; cursor: pointer;" class="modal-pay-method" onclick="selectModalMethod(this)">
+                    <div style="display: grid; gap: 12px;">
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 2px solid #1a2a6c; border-radius: 12px; background: #eef2ff; cursor: pointer;">
                             <input type="radio" name="payment_method" value="cod" checked style="accent-color: #1a2a6c;">
-                            <span style="font-weight: 700; font-size: 0.85rem;">COD</span>
+                            <span style="font-weight: 700; font-size: 0.85rem;">Cash on Delivery (COD)</span>
                         </label>
-                        <label style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer;" class="modal-pay-method" onclick="selectModalMethod(this)">
-                            <input type="radio" name="payment_method" value="online" style="accent-color: #1a2a6c;">
-                            <span style="font-weight: 700; font-size: 0.85rem;">Online</span>
-                        </label>
+                        <div style="padding: 10px; background: #f8fafc; border-radius: 10px; border: 1px dashed #e2e8f0; color: #94a3b8; font-size: 0.75rem; text-align: center;">
+                            Online payments disabled for maintenance.
+                        </div>
                     </div>
                 </div>
 

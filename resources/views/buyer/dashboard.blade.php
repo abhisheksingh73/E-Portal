@@ -1,6 +1,6 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Buyer Home')
+@section('title', 'My Dashboard')
 
 @section('sidebar_links')
     <a href="{{ route('buyer.dashboard') }}" class="nav-item active">
@@ -27,6 +27,10 @@
         <i class="fas fa-bullhorn"></i>
         <span>Textile Articles</span>
     </a>
+    <a href="{{ route('buyer.schemes') }}" class="nav-item">
+        <i class="fas fa-file-invoice"></i>
+        <span>Govt Schemes</span>
+    </a>
     <a href="{{ route('buyer.settings') }}" class="nav-item">
         <i class="fas fa-cog"></i>
         <span>Settings</span>
@@ -34,130 +38,130 @@
 @endsection
 
 @section('content')
-    <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+    <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
         <div>
-            <h1 style="font-size: 2rem; font-weight: 800; color: #1a2a6c;">Welcome back, {{ explode(' ', auth()->user()->name)[0] }}!</h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Explore the latest premium textile collections.</p>
+            <h1 style="font-size: 2.2rem; font-weight: 800; color: #1a2a6c;">Welcome back, <span style="color: #111827;">{{ explode(' ', auth()->user()->name)[0] }}!</span></h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Manage your orders and explore the finest textiles.</p>
         </div>
         <div style="display: flex; gap: 12px;">
-            <a href="{{ route('buyer.marketplace') }}" style="background: #1a2a6c; color: white; text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                <i class="fas fa-shopping-cart" style="margin-right: 8px;"></i> Shop Marketplace
+            <a href="{{ route('buyer.marketplace') }}" style="background: #1a2a6c; color: white; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2); transition: all 0.3s; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-shopping-bag"></i> Browse Marketplace
             </a>
         </div>
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card" style="background: linear-gradient(135deg, #ffffff, #f5f7ff); border: 1px solid #eef2ff;">
-            <div class="stat-icon" style="background: #eef2ff; color: #4338ca;">
-                <i class="fas fa-box"></i>
+    <!-- Shopping Summary -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 40px;">
+        <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 24px;">
+            <div style="width: 44px; height: 44px; background: #eef2ff; color: #4338ca; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 1.2rem;">
+                <i class="fas fa-box-open"></i>
             </div>
-            <div class="stat-info">
-                <h3>Active Orders</h3>
-                <p>{{ $stats['active_orders'] }}</p>
-                <span style="color: #4338ca; font-size: 0.8rem; font-weight: 700;">In Transit</span>
-            </div>
+            <div style="color: #64748b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Active Orders</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #1a2a6c; margin-top: 4px;">{{ $stats['active_orders'] }}</div>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #ffffff, #fff5f5); border: 1px solid #fff5f5;">
-            <div class="stat-icon" style="background: #fef2f2; color: #ef4444;">
+        <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 24px;">
+            <div style="width: 44px; height: 44px; background: #fef2f2; color: #ef4444; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 1.2rem;">
                 <i class="fas fa-heart"></i>
             </div>
-            <div class="stat-info">
-                <h3>Saved Items</h3>
-                <p>{{ $stats['wishlist_count'] }}</p>
-                <span style="color: #ef4444; font-size: 0.8rem; font-weight: 700;">3 Price Drops</span>
-            </div>
+            <div style="color: #64748b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Wishlist Items</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #1a2a6c; margin-top: 4px;">{{ $stats['wishlist_count'] }}</div>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #ffffff, #f0fdf4); border: 1px solid #f0fdf4;">
-            <div class="stat-icon" style="background: #ecfdf5; color: #059669;">
-                <i class="fas fa-award"></i>
+        <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 24px;">
+            <div style="width: 44px; height: 44px; background: #ecfdf5; color: #059669; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 1.2rem;">
+                <i class="fas fa-shopping-cart"></i>
             </div>
-            <div class="stat-info">
-                <h3>Reward Points</h3>
-                <p>{{ $stats['reward_points'] }}</p>
-                <span style="color: #059669; font-size: 0.8rem; font-weight: 700;">Silver Member</span>
-            </div>
+            <div style="color: #64748b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Items in Cart</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #1a2a6c; margin-top: 4px;">{{ $stats['cart_count'] }}</div>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #ffffff, #fefce8); border: 1px solid #fefce8;">
-            <div class="stat-icon" style="background: #fef9c3; color: #ca8a04;">
+        <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 24px;">
+            <div style="width: 44px; height: 44px; background: #fffbeb; color: #ca8a04; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 1.2rem;">
                 <i class="fas fa-wallet"></i>
             </div>
-            <div class="stat-info">
-                <h3>Total Spent</h3>
-                <p>₹{{ number_format($stats['total_spent']) }}</p>
-                <span style="color: #ca8a04; font-size: 0.8rem; font-weight: 700;">Lifetime savings</span>
-            </div>
+            <div style="color: #64748b; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Total Spent</div>
+            <div style="font-size: 1.75rem; font-weight: 800; color: #1a2a6c; margin-top: 4px;">₹{{ number_format($stats['total_spent']) }}</div>
         </div>
     </div>
 
-    <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 0; overflow: hidden;">
-        <div style="padding: 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="font-size: 1.25rem; font-weight: 700; color: #1a2a6c;">Recommended Textiles</h2>
-            <a href="{{ route('buyer.marketplace') }}" style="color: #4338ca; font-size: 0.9rem; font-weight: 700; text-decoration: none;">Explore Gallery <i class="fas fa-arrow-right" style="margin-left: 5px;"></i></a>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; padding: 24px;">
-            @forelse($recommendedProducts as $product)
-            <div style="border-radius: 16px; border: 1px solid #f1f5f9; overflow: hidden; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 15px 30px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                <div style="height: 180px; background: #f8fafc; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
-                    <span style="position: absolute; top: 12px; left: 12px; background: #1a2a6c; color: white; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 50px;">{{ $product->category }}</span>
-                    @if($product->image)
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    @else
-                        <i class="fas fa-image" style="font-size: 2.5rem; color: #cbd5e1;"></i>
-                    @endif
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px;">
+        <div style="display: flex; flex-direction: column; gap: 40px;">
+            <!-- Recommended Section -->
+            <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                <div style="padding: 24px 32px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                    <h2 style="font-size: 1.25rem; font-weight: 800; color: #1a2a6c;">Recommended Textiles</h2>
+                    <a href="{{ route('buyer.marketplace') }}" style="color: #1a2a6c; font-weight: 700; text-decoration: none; font-size: 0.85rem;">View All <i class="fas fa-arrow-right" style="margin-left: 6px; font-size: 0.7rem;"></i></a>
                 </div>
-                <div style="padding: 20px;">
-                    <div style="font-size: 0.8rem; color: #6366f1; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">{{ $product->seller->name ?? 'Premium Seller' }}</div>
-                    <h4 style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 8px;">{{ $product->name }}</h4>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 1.25rem; font-weight: 800; color: #1a2a6c;">₹{{ number_format($product->price) }}</span>
-                        <button onclick="window.location.href='{{ route('buyer.marketplace') }}'" style="width: 36px; height: 36px; border-radius: 10px; border: none; background: #f1f5f9; color: #1a2a6c; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#1a2a6c'; this.style.color='white'" onmouseout="this.style.background='#f1f5f9'; this.style.color='#1a2a6c'"><i class="fas fa-shopping-cart"></i></button>
+                <div style="padding: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    @forelse($recommendedProducts as $product)
+                    <div style="border-radius: 16px; border: 1px solid #f1f5f9; overflow: hidden; display: flex; gap: 16px; padding: 12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#1a2a6c'; this.style.background='#f8fafc'" onmouseout="this.style.borderColor='#f1f5f9'; this.style.background='transparent'">
+                        <div style="width: 100px; height: 100px; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
+                            @if($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            @else
+                                <div style="width: 100%; height: 100%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #cbd5e1;">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            @endif
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 0.75rem; color: #6366f1; font-weight: 700; text-transform: uppercase;">{{ $product->category }}</div>
+                            <h4 style="font-size: 1rem; font-weight: 800; color: #1e293b; margin: 4px 0;">{{ $product->name }}</h4>
+                            <div style="font-size: 1.1rem; font-weight: 800; color: #1a2a6c;">₹{{ number_format($product->price) }}</div>
+                        </div>
                     </div>
+                    @empty
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8;">
+                        <p>No recommendations at the moment.</p>
+                    </div>
+                    @endforelse
                 </div>
             </div>
-            @empty
-            <div style="text-align: center; padding: 40px; color: #94a3b8;">
-                <p>No products available at the moment.</p>
-            </div>
-            @endforelse
-        </div>
-    </div>
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; margin-top: 32px;">
-        <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-            <div style="padding: 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-weight: 700; color: #1e293b;">Recent Activity</h2>
-                <span style="font-size: 0.75rem; font-weight: 700; color: #1a2a6c;">YOUR TIMELINE</span>
-            </div>
-            <div style="padding: 24px;">
-                @forelse($activities as $activity)
-                <div style="display: flex; gap: 16px; margin-bottom: 24px;">
-                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #f8fafc; border: 1px solid #eef2ff; display: flex; align-items: center; justify-content: center; color: #4338ca; font-size: 1rem;">
-                        <i class="fas {{ $activity->type == 'purchase' ? 'fa-shopping-bag' : ($activity->type == 'delivery_confirmation' ? 'fa-check-double' : 'fa-info-circle') }}"></i>
-                    </div>
-                    <div style="flex: 1;">
-                        <p style="font-size: 0.95rem; color: #475569; line-height: 1.5; margin-bottom: 4px;">{{ $activity->message }}</p>
-                        <span style="font-size: 0.8rem; color: #94a3b8;">{{ $activity->created_at->diffForHumans() }}</span>
-                    </div>
+
+            <!-- Recent Activity -->
+            <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                <div style="padding: 24px 32px; border-bottom: 1px solid #f1f5f9; background: #fafafa;">
+                    <h2 style="font-size: 1.25rem; font-weight: 800; color: #1a2a6c;">Recent Activity</h2>
                 </div>
-                @empty
-                <div style="text-align: center; padding: 60px 0; color: #94a3b8;">
-                    <i class="fas fa-history" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.1;"></i>
-                    <p>No recent activity found.</p>
+                <div style="padding: 24px 32px;">
+                    @forelse($activities as $activity)
+                    <div style="display: flex; gap: 20px; margin-bottom: 24px; align-items: flex-start;">
+                        <div style="width: 40px; height: 40px; border-radius: 12px; background: #f1f5f9; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; color: #1a2a6c; font-size: 1rem; flex-shrink: 0;">
+                            <i class="fas {{ $activity->type == 'purchase' ? 'fa-shopping-bag' : ($activity->type == 'delivery_confirmation' ? 'fa-check' : 'fa-bell') }}"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <p style="font-size: 0.95rem; color: #1e293b; line-height: 1.5; font-weight: 500;">{{ $activity->message }}</p>
+                            <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 600; display: block; margin-top: 4px;">{{ $activity->created_at->diffForHumans() }}</span>
+                        </div>
+                    </div>
+                    @empty
+                    <div style="text-align: center; padding: 60px 0; color: #94a3b8;">
+                        <p style="font-weight: 600;">No recent activity.</p>
+                    </div>
+                    @endforelse
                 </div>
-                @endforelse
             </div>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-            <div class="card" style="background: linear-gradient(135deg, #1a2a6c, #243b55); color: white; border: none; padding: 24px; box-shadow: 0 10px 30px rgba(26, 42, 108, 0.2);">
-                <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 12px;">Loyalty Program</h3>
-                <p style="font-size: 0.85rem; font-weight: 400; line-height: 1.5; margin-bottom: 16px; opacity: 0.9;">You are only 250 points away from a <b>15% discount</b> on your next silk purchase!</p>
-                <button style="width: 100%; padding: 10px; background: white; color: #1a2a6c; border: none; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">View Rewards</button>
+        <div>
+            <!-- Summary Card -->
+            <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 32px; background: linear-gradient(135deg, #1a2a6c, #243b55); color: white; margin-bottom: 32px;">
+                <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 20px;">Shopping Summary</h3>
+                <div style="display: grid; gap: 24px;">
+                    <div>
+                        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; opacity: 0.7; letter-spacing: 1px; margin-bottom: 4px;">Total Lifetime Orders</div>
+                        <div style="font-size: 1.5rem; font-weight: 800;">{{ $stats['total_orders'] }}</div>
+                    </div>
+                    <div style="padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <a href="{{ route('buyer.orders') }}" style="color: #fdbb2d; text-decoration: none; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                            Track Recent Orders <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; padding: 24px;">
-                <div style="font-size: 2rem; margin-bottom: 12px;">🚚</div>
-                <h4 style="font-weight: 700; color: #1e293b; margin-bottom: 8px;">Free Delivery</h4>
-                <p style="font-size: 0.8rem; color: #94a3b8;">On all orders above ₹10,000 this weekend!</p>
+            <!-- Helpful Info -->
+            <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); padding: 32px;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; color: #1a2a6c; margin-bottom: 16px;">Authenticity Guarantee</h3>
+                <p style="color: #475569; font-size: 0.9rem; line-height: 1.6;">Every product on the E-Portal is verified by the Ministry of Textiles. Shop with confidence knowing you are supporting genuine Indian artisans.</p>
             </div>
         </div>
     </div>

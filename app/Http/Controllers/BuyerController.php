@@ -22,10 +22,11 @@ class BuyerController extends Controller
                 ->whereIn('status', ['pending', 'shipped'])
                 ->count(),
             'wishlist_count' => \App\Models\Wishlist::where('user_id', $user->id)->count(),
-            'reward_points' => 1250, 
+            'cart_count' => \App\Models\Cart::where('user_id', $user->id)->count(),
             'total_spent' => Order::where('buyer_id', $user->id)
-                ->whereIn('payment_status', ['paid'])
+                ->where('payment_status', 'paid')
                 ->sum('total_price'),
+            'total_orders' => Order::where('buyer_id', $user->id)->count(),
         ];
 
         // Fetch up to 4 active products for the grid
@@ -61,18 +62,33 @@ class BuyerController extends Controller
         return back()->with('success', 'Profile updated successfully!');
     }
 
-    public function marketplace()
+    public function marketplace(Request $request)
     {
-        $products = \App\Models\Product::where('status', 'active')->latest()->get();
+        $query = Product::where('status', 'active')->latest();
+
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        $products = $query->paginate(12)->withQueryString();
         return view('buyer.marketplace', compact('products'));
     }
 
-    public function orders()
+    public function orders(Request $request)
     {
-        $orders = Order::with('product.seller')
+        $query = Order::with('product.seller')
             ->where('buyer_id', Auth::id())
-            ->latest()
-            ->get();
+            ->latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
         return view('buyer.orders', compact('orders'));
     }
 

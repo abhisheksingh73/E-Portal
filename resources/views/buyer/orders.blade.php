@@ -27,6 +27,10 @@
         <i class="fas fa-bullhorn"></i>
         <span>Textile Articles</span>
     </a>
+    <a href="{{ route('buyer.schemes') }}" class="nav-item">
+        <i class="fas fa-file-invoice"></i>
+        <span>Govt Schemes</span>
+    </a>
     <a href="{{ route('buyer.settings') }}" class="nav-item">
         <i class="fas fa-cog"></i>
         <span>Settings</span>
@@ -38,6 +42,20 @@
         <div>
             <h1 style="font-size: 2rem; font-weight: 800; color: #1a2a6c;">Order History</h1>
             <p style="color: var(--text-muted); font-size: 1.1rem;">Track your recent purchases and download invoices.</p>
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <form action="{{ route('buyer.orders') }}" method="GET" style="display: flex; gap: 12px;">
+                <select name="status" onchange="this.form.submit()" style="padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; background: white; cursor: pointer; color: #64748b; font-weight: 600;">
+                    <option value="">All Statuses</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                    <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                </select>
+                @if(request()->filled('status'))
+                    <a href="{{ route('buyer.orders') }}" style="background: white; color: #ef4444; border: 1px solid #ef4444; padding: 12px; border-radius: 12px; display: flex; align-items: center; text-decoration: none;"><i class="fas fa-times"></i></a>
+                @endif
+            </form>
         </div>
     </div>
 

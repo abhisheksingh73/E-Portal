@@ -39,9 +39,24 @@
             <h1 style="font-size: 2rem; font-weight: 800; color: #1a2a6c;">Marketing Content</h1>
             <p style="color: var(--text-muted); font-size: 1.1rem;">Create articles and stories to promote Indian textiles.</p>
         </div>
-        <button onclick="document.getElementById('addArticleModal').style.display='flex'" style="background: #1a2a6c; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2);">
-            <i class="fas fa-plus" style="margin-right: 8px;"></i> Write New Article
-        </button>
+        <div style="display: flex; gap: 12px;">
+            <form action="{{ route('admin.articles') }}" method="GET" style="display: flex; gap: 12px;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search articles..." style="padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; width: 200px;">
+                <select name="category" onchange="this.form.submit()" style="padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; background: white; cursor: pointer; color: #64748b; font-weight: 600;">
+                    <option value="">All Topics</option>
+                    <option value="Heritage" {{ request('category') == 'Heritage' ? 'selected' : '' }}>Heritage</option>
+                    <option value="Innovation" {{ request('category') == 'Innovation' ? 'selected' : '' }}>Innovation</option>
+                    <option value="MSME Stories" {{ request('category') == 'MSME Stories' ? 'selected' : '' }}>MSME Stories</option>
+                    <option value="Ministry News" {{ request('category') == 'Ministry News' ? 'selected' : '' }}>Ministry News</option>
+                </select>
+                @if(request()->filled('search') || request()->filled('category'))
+                    <a href="{{ route('admin.articles') }}" style="background: white; color: #ef4444; border: 1px solid #ef4444; padding: 12px; border-radius: 12px; display: flex; align-items: center; text-decoration: none;"><i class="fas fa-times"></i></a>
+                @endif
+            </form>
+            <button onclick="document.getElementById('addArticleModal').style.display='flex'" style="background: #1a2a6c; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2);">
+                <i class="fas fa-plus" style="margin-right: 8px;"></i> Write New Article
+            </button>
+        </div>
     </div>
 
     @if(session('success'))

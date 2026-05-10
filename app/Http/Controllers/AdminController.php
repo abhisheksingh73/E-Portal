@@ -71,18 +71,43 @@ class AdminController extends Controller
 
     public function products(Request $request)
     {
-        $query = Product::with('seller');
+        $query = Product::with('seller')->latest();
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        if ($request->has('category') && $request->category != '') {
+        if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
 
-        $products = $query->latest()->get();
+        $products = $query->paginate(10)->withQueryString();
         return view('admin.products.index', compact('products'));
+    }
+
+    public function orders(Request $request)
+    {
+        $query = Order::with(['product', 'buyer'])->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('id', 'like', '%' . $search . '%')
+                  ->orWhereHas('buyer', function($bq) use ($search) {
+                      $bq->where('name', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('product', function($pq) use ($search) {
+                      $pq->where('name', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
+        return view('admin.orders.index', compact('orders'));
     }
 
     public function createProduct()
@@ -244,9 +269,15 @@ class AdminController extends Controller
     }
 
     // Government Schemes Management
-    public function schemes()
+    public function schemes(Request $request)
     {
-        $schemes = Scheme::latest()->get();
+        $query = Scheme::latest();
+
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $schemes = $query->paginate(10)->withQueryString();
         return view('admin.schemes.index', compact('schemes'));
     }
 

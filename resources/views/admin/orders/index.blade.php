@@ -40,6 +40,19 @@
             <p style="color: var(--text-muted); font-size: 1.1rem;">Track and manage transactions across the e-portal.</p>
         </div>
         <div style="display: flex; gap: 12px;">
+            <form action="{{ route('admin.orders') }}" method="GET" style="display: flex; gap: 12px;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Order ID or Name..." style="padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; width: 220px;">
+                <select name="status" onchange="this.form.submit()" style="padding: 12px 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; background: white; cursor: pointer; color: #64748b; font-weight: 600;">
+                    <option value="">All Statuses</option>
+                    <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="shipped" {{ request('status') == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                    <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                    <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                </select>
+                @if(request()->filled('search') || request()->filled('status'))
+                    <a href="{{ route('admin.orders') }}" style="background: white; color: #ef4444; border: 1px solid #ef4444; padding: 12px; border-radius: 12px; display: flex; align-items: center; text-decoration: none;"><i class="fas fa-times"></i></a>
+                @endif
+            </form>
             <a href="{{ route('admin.orders.export') }}" style="background: white; color: #1e293b; border: 1px solid #e2e8f0; padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; text-decoration: none;">
                 <i class="fas fa-download" style="margin-right: 8px;"></i> Download Report
             </a>
