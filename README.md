@@ -6,7 +6,7 @@ The **E-Portal for Marketing** is a web-based application developed using Larave
 It helps businesses promote their products/services digitally and allows users to explore marketing content through an interactive platform.
 It contains three roles Admin, Seller and Buyer.
 ---
-
+Live Link :- https://e-portal-yido.onrender.com
 ## 🚀 Features
 
 * User Authentication (Login/Register/Logout)
