@@ -28,9 +28,22 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('stats', 'recentUsers', 'pendingSellers', 'activities'));
     }
 
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::latest()->paginate(10);
+        $query = User::latest();
+
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        $users = $query->paginate(10)->withQueryString();
         return view('admin.users.index', compact('users'));
     }
 
@@ -190,11 +203,38 @@ class AdminController extends Controller
     public function analytics()
     {
         $marketStats = [
-            'total_revenue' => \App\Models\Order::where('status', 'delivered')->sum('quantity'), // Simplified revenue
-            'order_count' => \App\Models\Order::count(),
-            'avg_order_value' => \App\Models\Order::count() > 0 ? \App\Models\Order::sum('quantity') / \App\Models\Order::count() : 0,
-            'top_categories' => Product::groupBy('category')->select('category', \DB::raw('count(*) as total'))->get(),
+            'total_revenue' => \App\Models\Order::where('status', 'delivered')->sum('total_price'),
+            'total_orders' => \App\Models\Order::count(),
+            'pending_orders' => \App\Models\Order::where('status', 'pending')->count(),
+            'avg_order_value' => \App\Models\Order::where('status', 'delivered')->count() > 0 
+                ? \App\Models\Order::where('status', 'delivered')->sum('total_price') / \App\Models\Order::where('status', 'delivered')->count() 
+                : 0,
+            
+            'users' => [
+                'sellers' => User::where('role', 'seller')->count(),
+                'buyers' => User::where('role', 'buyer')->count(),
+                'pending_sellers' => User::where('role', 'seller')->where('is_approved', false)->count(),
+            ],
+            
+            'products' => [
+                'total' => Product::count(),
+                'active' => Product::where('status', 'active')->count(),
+            ],
+
+            'schemes' => [
+                'total_applications' => \App\Models\SchemeApplication::count(),
+                'pending_applications' => \App\Models\SchemeApplication::where('status', 'pending')->count(),
+                'approved_applications' => \App\Models\SchemeApplication::where('status', 'approved')->count(),
+                'active_schemes' => \App\Models\Scheme::where('status', 'active')->count(),
+            ],
+            
+            'top_categories' => Product::groupBy('category')
+                ->select('category', \DB::raw('count(*) as total'))
+                ->orderBy('total', 'desc')
+                ->take(5)
+                ->get(),
         ];
+
         return view('admin.analytics', compact('marketStats'));
     }
 
@@ -233,6 +273,61 @@ class AdminController extends Controller
         return back()->with('success', 'Scheme added successfully!');
     }
 
+    public function updateScheme(Request $request, Scheme $scheme)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'status' => 'required|in:active,inactive',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $data = $request->only(['title', 'description', 'status']);
+
+        if ($request->hasFile('image')) {
+            if ($scheme->image) {
+                Storage::disk('public')->delete($scheme->image);
+            }
+            $data['image'] = $request->file('image')->store('schemes', 'public');
+        }
+
+        $scheme->update($data);
+
+        return back()->with('success', 'Scheme updated successfully!');
+    }
+
+    public function destroyScheme(Scheme $scheme)
+    {
+        if ($scheme->image) {
+            Storage::disk('public')->delete($scheme->image);
+        }
+        $scheme->delete();
+        return back()->with('success', 'Scheme deleted successfully!');
+    }
+
+    public function schemeApplications()
+    {
+        $applications = \App\Models\SchemeApplication::with(['scheme', 'user'])->latest()->get();
+        return view('admin.schemes.applications', compact('applications'));
+    }
+
+    public function updateApplicationStatus(Request $request, \App\Models\SchemeApplication $application)
+    {
+        $request->validate([
+            'status' => 'required|in:approved,rejected',
+        ]);
+
+        $application->update(['status' => $request->status]);
+
+        \App\Models\Activity::create([
+            'user_id' => auth()->id(),
+            'type' => 'scheme_update',
+            'message' => "Administrator {$request->status} scheme application from '{$application->user->name}' for '{$application->scheme->title}'.",
+        ]);
+
+        return back()->with('success', "Application has been " . strtoupper($request->status));
+    }
+
     // Marketing Articles Management
     public function articles()
     {
@@ -263,5 +358,38 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Article published successfully!');
+    }
+
+    public function updateArticle(Request $request, Article $article)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category' => 'required|string',
+            'status' => 'required|in:published,draft,archived',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $data = $request->only(['title', 'content', 'category', 'status']);
+
+        if ($request->hasFile('image')) {
+            if ($article->image) {
+                Storage::disk('public')->delete($article->image);
+            }
+            $data['image'] = $request->file('image')->store('articles', 'public');
+        }
+
+        $article->update($data);
+
+        return back()->with('success', 'Article updated successfully!');
+    }
+
+    public function destroyArticle(Article $article)
+    {
+        if ($article->image) {
+            Storage::disk('public')->delete($article->image);
+        }
+        $article->delete();
+        return back()->with('success', 'Article deleted successfully!');
     }
 }

@@ -39,9 +39,14 @@
             <h1 style="font-size: 2rem; font-weight: 800; color: #1a2a6c;">Government Schemes</h1>
             <p style="color: var(--text-muted); font-size: 1.1rem;">Post and manage Ministry initiatives for weavers and businesses.</p>
         </div>
-        <button onclick="document.getElementById('addSchemeModal').style.display='flex'" style="background: #1a2a6c; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2);">
-            <i class="fas fa-plus" style="margin-right: 8px;"></i> Add New Scheme
-        </button>
+        <div style="display: flex; gap: 12px;">
+            <a href="{{ route('admin.schemes.applications') }}" style="background: #f1f5f9; color: #1a2a6c; text-decoration: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-inbox"></i> View Applications
+            </a>
+            <button onclick="document.getElementById('addSchemeModal').style.display='flex'" style="background: #1a2a6c; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2);">
+                <i class="fas fa-plus" style="margin-right: 8px;"></i> Add New Scheme
+            </button>
+        </div>
     </div>
 
     @if(session('success'))
@@ -65,7 +70,18 @@
                 <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; margin-bottom: 20px;">{{ Str::limit($scheme->description, 150) }}</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="padding: 4px 12px; background: #ecfdf5; color: #059669; border-radius: 50px; font-size: 0.75rem; font-weight: 700;">{{ strtoupper($scheme->status) }}</span>
-                    <button style="background: none; border: 1px solid #e2e8f0; color: var(--text-dark); padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">Edit Scheme</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="editScheme({{ $scheme }})" style="background: none; border: 1px solid #e2e8f0; color: var(--text-dark); padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='none'">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <form action="{{ route('admin.schemes.destroy', $scheme) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this scheme?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="background: #fef2f2; border: 1px solid #fee2e2; color: #ef4444; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -102,4 +118,54 @@
             </form>
         </div>
     </div>
+    <!-- Edit Scheme Modal -->
+    <div id="editSchemeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background: white; width: 500px; border-radius: 20px; padding: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="font-size: 1.5rem; font-weight: 800; color: #1a2a6c;">Edit Govt Scheme</h2>
+                <button onclick="document.getElementById('editSchemeModal').style.display='none'" style="background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer;"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="editSchemeForm" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">Scheme Title</label>
+                    <input type="text" name="title" id="edit_title" required style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; font-family: inherit;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">Description</label>
+                    <textarea name="description" id="edit_description" required rows="4" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; font-family: inherit; resize: none;"></textarea>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">Status</label>
+                    <select name="status" id="edit_status" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; font-family: inherit;">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 24px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">Cover Image (Optional)</label>
+                    <input type="file" name="image" style="width: 100%;">
+                </div>
+                <button type="submit" style="width: 100%; background: #1a2a6c; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1rem;">Update Scheme</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function editScheme(scheme) {
+            const modal = document.getElementById('editSchemeModal');
+            const form = document.getElementById('editSchemeForm');
+            
+            // Set values
+            document.getElementById('edit_title').value = scheme.title;
+            document.getElementById('edit_description').value = scheme.description;
+            document.getElementById('edit_status').value = scheme.status;
+            
+            // Set action URL
+            form.action = `/admin/schemes/${scheme.id}`;
+            
+            modal.style.display = 'flex';
+        }
+    </script>
 @endsection

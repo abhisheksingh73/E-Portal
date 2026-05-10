@@ -60,9 +60,6 @@
                     <a href="{{ route('admin.products') }}" style="background: white; color: #ef4444; border: 1px solid #ef4444; padding: 12px; border-radius: 12px; display: flex; align-items: center;"><i class="fas fa-times"></i></a>
                 @endif
             </form>
-            <a href="{{ route('admin.products.create') }}" style="background: #1a2a6c; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; text-decoration: none; display: flex; align-items: center; box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2);">
-                <i class="fas fa-plus" style="margin-right: 8px;"></i> Add Product
-            </a>
         </div>
     </div>
 
@@ -98,12 +95,30 @@
                         </div>
                         <span style="font-size: 0.8rem; font-weight: 600; color: #475569;">{{ $product->seller->name ?? 'Unknown' }}</span>
                     </div>
-                    <div style="display: flex; gap: 8px;">
-                        <a href="{{ route('admin.products.edit', $product) }}" style="color: #94a3b8; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#4338ca'" onmouseout="this.style.color='#94a3b8'"><i class="fas fa-edit"></i></a>
-                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirm('Delete this product permanently?')">
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button title="Quick View" onclick="showProductDetails({{ json_encode($product->name) }}, {{ json_encode($product->description) }}, {{ json_encode($product->price) }}, {{ json_encode($product->category) }}, {{ json_encode($product->seller->name ?? 'Unknown') }})" style="background: white; border: 1px solid #e2e8f0; color: #1a2a6c; width: 32px; height: 32px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='white'">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                        @if($product->status == 'pending')
+                            <form action="{{ route('admin.products.update', $product) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="name" value="{{ $product->name }}">
+                                <input type="hidden" name="description" value="{{ $product->description }}">
+                                <input type="hidden" name="price" value="{{ $product->price }}">
+                                <input type="hidden" name="category" value="{{ $product->category }}">
+                                <input type="hidden" name="status" value="active">
+                                <button type="submit" style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                            </form>
+                        @endif
+                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirm('Moderation: Are you sure you want to PERMANENTLY DELETE this product from the portal?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 0;"><i class="fas fa-trash"></i></button>
+                            <button type="submit" title="Moderation: Delete" style="background: #fef2f2; border: 1px solid #fee2e2; color: #ef4444; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -118,7 +133,35 @@
         @endforelse
     </div>
 
-    <div style="margin-top: 40px; text-align: center;">
-        <p style="color: #64748b; font-size: 0.9rem;">System monitoring enabled. All deletions are logged in the <a href="#" style="color: #1a2a6c; font-weight: 700; text-decoration: none;">Security Audit Trail</a></p>
+    <!-- Product Details Modal -->
+    <div id="productModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: white; width: 600px; border-radius: 24px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative;">
+            <button onclick="document.getElementById('productModal').style.display='none'" style="position: absolute; top: 24px; right: 24px; background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; color: #64748b; cursor: pointer;"><i class="fas fa-times"></i></button>
+            <div id="modalProductCategory" style="font-size: 0.75rem; font-weight: 800; color: #4338ca; text-transform: uppercase; margin-bottom: 8px;"></div>
+            <h2 id="modalProductName" style="font-size: 1.75rem; font-weight: 800; color: #1a2a6c; margin-bottom: 16px;"></h2>
+            <div style="display: flex; gap: 24px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #f1f5f9;">
+                <div>
+                    <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Price</div>
+                    <div id="modalProductPrice" style="font-size: 1.25rem; font-weight: 800; color: #1e293b;"></div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase;">Seller</div>
+                    <div id="modalProductSeller" style="font-size: 1.25rem; font-weight: 800; color: #1e293b;"></div>
+                </div>
+            </div>
+            <p id="modalProductDescription" style="color: #475569; line-height: 1.8; font-size: 1.05rem; margin-bottom: 32px;"></p>
+            <button onclick="document.getElementById('productModal').style.display='none'" style="width: 100%; background: #1a2a6c; color: white; border: none; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer;">Close Details</button>
+        </div>
     </div>
+
+    <script>
+        function showProductDetails(name, description, price, category, seller) {
+            document.getElementById('modalProductName').innerText = name;
+            document.getElementById('modalProductDescription').innerText = description;
+            document.getElementById('modalProductPrice').innerText = '₹' + new Intl.NumberFormat().format(price);
+            document.getElementById('modalProductCategory').innerText = category;
+            document.getElementById('modalProductSeller').innerText = seller;
+            document.getElementById('productModal').style.display = 'flex';
+        }
+    </script>
 @endsection

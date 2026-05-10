@@ -38,15 +38,23 @@
 @endsection
 
 @section('content')
-    <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
-        <div>
-            <h1 style="font-size: 2rem; font-weight: 800; color: #1a2a6c;">Government Schemes</h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Discover Ministry initiatives designed to support and empower you.</p>
+    @if(session('success'))
+        <div style="background: #ecfdf5; color: #059669; padding: 16px; border-radius: 12px; margin-bottom: 24px; font-weight: 600;">
+            <i class="fas fa-check-circle"></i> {{ session('success') }}
         </div>
-    </div>
+    @endif
+
+    @if(session('error'))
+        <div style="background: #fef2f2; color: #ef4444; padding: 16px; border-radius: 12px; margin-bottom: 24px; font-weight: 600;">
+            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+        </div>
+    @endif
 
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 32px;">
         @forelse($schemes as $scheme)
+        @php
+            $hasApplied = \App\Models\SchemeApplication::where('scheme_id', $scheme->id)->where('user_id', auth()->id())->first();
+        @endphp
         <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
             <div style="display: flex; height: 250px;">
                 <div style="flex: 1; position: relative;">
@@ -57,7 +65,13 @@
                             <i class="fas fa-landmark" style="font-size: 4rem; opacity: 0.2;"></i>
                         </div>
                     @endif
-                    <div style="position: absolute; top: 20px; left: 20px; background: #fdbb2d; color: #1a1a1a; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">New Scheme</div>
+                    <div style="position: absolute; top: 20px; left: 20px; background: #fdbb2d; color: #1a1a1a; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">
+                        @if($hasApplied)
+                            Application {{ ucfirst($hasApplied->status) }}
+                        @else
+                            New Scheme
+                        @endif
+                    </div>
                 </div>
                 <div style="flex: 1.2; padding: 32px; display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
@@ -65,8 +79,12 @@
                         <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px;">{{ Str::limit($scheme->description, 120) }}</p>
                     </div>
                     <div style="display: flex; gap: 12px;">
-                        <button onclick="showSchemeDetails('{{ addslashes($scheme->title) }}', '{{ addslashes($scheme->description) }}')" style="flex: 1; background: #1a2a6c; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Learn More</button>
-                        <button onclick="alert('Scheme document downloading...')" style="width: 44px; height: 44px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; color: #1a2a6c; cursor: pointer;"><i class="fas fa-download"></i></button>
+                        @if($hasApplied)
+                            <button disabled style="flex: 1; background: #f1f5f9; color: #94a3b8; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: not-allowed;">Already Applied</button>
+                        @else
+                            <button onclick="openApplyModal('{{ $scheme->id }}', '{{ addslashes($scheme->title) }}')" style="flex: 1; background: #1a2a6c; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Apply Now</button>
+                        @endif
+                        <button onclick="showSchemeDetails('{{ addslashes($scheme->title) }}', '{{ addslashes($scheme->description) }}')" style="width: 44px; height: 44px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; color: #1a2a6c; cursor: pointer;"><i class="fas fa-info-circle"></i></button>
                     </div>
                 </div>
             </div>
@@ -78,6 +96,24 @@
             <p style="color: #94a3b8; margin-top: 8px;">Check back later for new Ministry updates.</p>
         </div>
         @endforelse
+    </div>
+
+    <!-- Apply Modal -->
+    <div id="applyModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: white; width: 500px; border-radius: 24px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <h2 id="applyModalTitle" style="font-size: 1.5rem; font-weight: 800; color: #1a2a6c; margin-bottom: 24px;">Apply for Scheme</h2>
+            <form id="applyForm" method="POST">
+                @csrf
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">Application Notes / Background</label>
+                    <textarea name="notes" placeholder="Tell us why you are applying and any relevant details..." required rows="4" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-family: inherit; resize: none;"></textarea>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button type="button" onclick="document.getElementById('applyModal').style.display='none'" style="flex: 1; background: #f1f5f9; color: #64748b; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="flex: 2; background: #1a2a6c; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer;">Submit Application</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- Scheme Details Modal -->
@@ -92,6 +128,16 @@
     </div>
 
     <script>
+        function openApplyModal(schemeId, schemeTitle) {
+            const modal = document.getElementById('applyModal');
+            const form = document.getElementById('applyForm');
+            const title = document.getElementById('applyModalTitle');
+            
+            title.innerText = `Apply for: ${schemeTitle}`;
+            form.action = `/buyer/schemes/${schemeId}/apply`;
+            modal.style.display = 'flex';
+        }
+
         function showSchemeDetails(title, description) {
             document.getElementById('modalSchemeTitle').innerText = title;
             document.getElementById('modalSchemeDescription').innerText = description;

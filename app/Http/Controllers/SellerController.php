@@ -239,6 +239,33 @@ class SellerController extends Controller
         return view('seller.schemes', compact('schemes'));
     }
 
+    public function applyForScheme(Request $request, \App\Models\Scheme $scheme)
+    {
+        // Check if already applied
+        $existing = \App\Models\SchemeApplication::where('scheme_id', $scheme->id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($existing) {
+            return back()->with('error', 'You have already applied for this scheme.');
+        }
+
+        \App\Models\SchemeApplication::create([
+            'scheme_id' => $scheme->id,
+            'user_id' => Auth::id(),
+            'application_notes' => $request->notes,
+            'status' => 'pending',
+        ]);
+
+        \App\Models\Activity::create([
+            'user_id' => Auth::id(),
+            'type' => 'scheme_application',
+            'message' => "Seller submitted an application for the scheme: '{$scheme->title}'.",
+        ]);
+
+        return back()->with('success', 'Your application has been submitted successfully! The Ministry will review it shortly.');
+    }
+
     private function uploadImage($file)
     {
         $cloudinaryUrl = env('CLOUDINARY_URL');

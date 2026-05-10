@@ -51,25 +51,28 @@
             <h1 style="font-size: 2.5rem; font-weight: 900; color: #111827; letter-spacing: -1px; margin-bottom: 8px;">User <span style="color: var(--primary);">Directory</span></h1>
             <p style="color: var(--text-muted); font-size: 1.1rem; font-weight: 500;">Manage ministry stakeholders and portal access control.</p>
         </div>
-        <button class="action-btn" style="background: var(--primary); color: white; border: none;">
-            <i class="fas fa-user-plus"></i> Add New User
-        </button>
+
     </div>
 
     <div class="card stagger-item" style="padding: 0; overflow: hidden; animation-delay: 0.2s;">
         <div style="padding: 24px; border-bottom: 1px solid #f1f5f9; background: #fafbfc; display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; gap: 16px;">
+            <form action="{{ route('admin.users') }}" method="GET" style="display: flex; gap: 16px;">
                 <div style="position: relative;">
                     <i class="fas fa-search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 0.9rem;"></i>
-                    <input type="text" placeholder="Search by name or email..." style="padding: 10px 10px 10px 40px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; width: 300px; font-size: 0.9rem; transition: all 0.3s;" onfocus="this.style.borderColor='#4338ca'; this.style.boxShadow='0 0 0 3px rgba(67, 56, 202, 0.1)';">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name or email..." style="padding: 10px 10px 10px 40px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; width: 300px; font-size: 0.9rem; transition: all 0.3s;" onfocus="this.style.borderColor='#4338ca'; this.style.boxShadow='0 0 0 3px rgba(67, 56, 202, 0.1)';">
                 </div>
-                <select style="padding: 10px 16px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; background: white; font-size: 0.9rem; color: #64748b; cursor: pointer;">
+                <select name="role" onchange="this.form.submit()" style="padding: 10px 16px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; background: white; font-size: 0.9rem; color: #64748b; cursor: pointer;">
                     <option value="">All Roles</option>
-                    <option value="seller">Sellers</option>
-                    <option value="buyer">Buyers</option>
-                    <option value="admin">Administrators</option>
+                    <option value="seller" {{ request('role') == 'seller' ? 'selected' : '' }}>Sellers</option>
+                    <option value="buyer" {{ request('role') == 'buyer' ? 'selected' : '' }}>Buyers</option>
+                    <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Administrators</option>
                 </select>
-            </div>
+                @if(request()->filled('search') || request()->filled('role'))
+                    <a href="{{ route('admin.users') }}" style="background: white; color: #ef4444; border: 1px solid #ef4444; padding: 10px 16px; border-radius: 10px; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 600;">
+                        <i class="fas fa-times"></i> Clear Filters
+                    </a>
+                @endif
+            </form>
             <div style="color: var(--text-muted); font-size: 0.9rem;">
                 Showing <b>{{ $users->firstItem() ?? 0 }}</b> to <b>{{ $users->lastItem() ?? 0 }}</b> of <b>{{ $users->total() }}</b> users
             </div>

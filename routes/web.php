@@ -38,8 +38,16 @@ Route::middleware('auth')->group(function () {
         // Schemes & Articles
         Route::get('/schemes', [AdminController::class, 'schemes'])->name('admin.schemes');
         Route::post('/schemes', [AdminController::class, 'storeScheme'])->name('admin.schemes.store');
+        Route::put('/schemes/{scheme}', [AdminController::class, 'updateScheme'])->name('admin.schemes.update');
+        Route::delete('/schemes/{scheme}', [AdminController::class, 'destroyScheme'])->name('admin.schemes.destroy');
+        
+        Route::get('/scheme-applications', [AdminController::class, 'schemeApplications'])->name('admin.schemes.applications');
+        Route::patch('/scheme-applications/{application}/status', [AdminController::class, 'updateApplicationStatus'])->name('admin.schemes.applications.status');
+
         Route::get('/articles', [AdminController::class, 'articles'])->name('admin.articles');
         Route::post('/articles', [AdminController::class, 'storeArticle'])->name('admin.articles.store');
+        Route::put('/articles/{article}', [AdminController::class, 'updateArticle'])->name('admin.articles.update');
+        Route::delete('/articles/{article}', [AdminController::class, 'destroyArticle'])->name('admin.articles.destroy');
 
         Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings');
     });
@@ -50,6 +58,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/orders', [BuyerController::class, 'orders'])->name('buyer.orders');
         Route::post('/orders', [BuyerController::class, 'placeOrder'])->name('buyer.orders.store');
         Route::get('/schemes', [BuyerController::class, 'schemes'])->name('buyer.schemes');
+        Route::post('/schemes/{scheme}/apply', [BuyerController::class, 'applyForScheme'])->name('buyer.schemes.apply');
         Route::get('/articles', [BuyerController::class, 'articles'])->name('buyer.articles');
         Route::post('/contact', [BuyerController::class, 'contactSeller'])->name('buyer.contact.store');
         Route::get('/wishlist', [BuyerController::class, 'wishlist'])->name('buyer.wishlist');
@@ -88,6 +97,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/earnings', [SellerController::class, 'earnings'])->name('seller.earnings');
         Route::get('/settings', [SellerController::class, 'settings'])->name('seller.settings');
         Route::get('/schemes', [SellerController::class, 'schemes'])->name('seller.schemes');
+        Route::post('/schemes/{scheme}/apply', [SellerController::class, 'applyForScheme'])->name('seller.schemes.apply');
         Route::get('/articles', [SellerController::class, 'articles'])->name('seller.articles');
     });
 

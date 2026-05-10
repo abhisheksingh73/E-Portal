@@ -66,7 +66,18 @@
                 <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; margin-bottom: 20px;">{{ Str::limit($article->content, 150) }}</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="color: #94a3b8; font-size: 0.8rem;">{{ $article->created_at->format('M d, Y') }}</span>
-                    <button style="background: none; border: 1px solid #e2e8f0; color: var(--text-dark); padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer;">Edit Article</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="editArticle({{ $article }})" style="background: none; border: 1px solid #e2e8f0; color: var(--text-dark); padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='none'">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <form action="{{ route('admin.articles.destroy', $article) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this article?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="background: #fef2f2; border: 1px solid #fee2e2; color: #ef4444; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -112,4 +123,65 @@
             </form>
         </div>
     </div>
+    <!-- Edit Article Modal -->
+    <div id="editArticleModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+        <div style="background: white; width: 600px; border-radius: 20px; padding: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="font-size: 1.5rem; font-weight: 800; color: #1a2a6c;">Edit Marketing Article</h2>
+                <button onclick="document.getElementById('editArticleModal').style.display='none'" style="background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer;"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="editArticleForm" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">Article Title</label>
+                    <input type="text" name="title" id="edit_article_title" required style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; font-family: inherit;">
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">Category</label>
+                    <select name="category" id="edit_article_category" required style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; font-family: inherit;">
+                        <option value="Heritage">Heritage & Tradition</option>
+                        <option value="Innovation">Innovation in Textiles</option>
+                        <option value="MSME Stories">MSME Stories</option>
+                        <option value="Ministry News">Ministry News</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">Status</label>
+                    <select name="status" id="edit_article_status" required style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; font-family: inherit;">
+                        <option value="published">Published</option>
+                        <option value="draft">Draft</option>
+                        <option value="archived">Archived</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">Content</label>
+                    <textarea name="content" id="edit_article_content" required rows="6" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; outline: none; font-family: inherit; resize: none;"></textarea>
+                </div>
+                <div style="margin-bottom: 24px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem;">Update Image (Optional)</label>
+                    <input type="file" name="image" style="width: 100%;">
+                </div>
+                <button type="submit" style="width: 100%; background: #1a2a6c; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 1rem;">Update Article</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function editArticle(article) {
+            const modal = document.getElementById('editArticleModal');
+            const form = document.getElementById('editArticleForm');
+            
+            // Set values
+            document.getElementById('edit_article_title').value = article.title;
+            document.getElementById('edit_article_category').value = article.category;
+            document.getElementById('edit_article_status').value = article.status;
+            document.getElementById('edit_article_content').value = article.content;
+            
+            // Set action URL
+            form.action = `/admin/articles/${article.id}`;
+            
+            modal.style.display = 'flex';
+        }
+    </script>
 @endsection

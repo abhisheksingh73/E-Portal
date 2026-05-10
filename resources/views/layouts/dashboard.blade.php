@@ -417,9 +417,8 @@
 
     <main class="main-content">
         <header>
-            <div class="search-bar">
-                <i class="fas fa-search" style="color: #94a3b8;"></i>
-                <input type="text" placeholder="Search anything...">
+            <div>
+                <!-- Removed non-functional placeholder search -->
             </div>
 
             <div class="user-profile">

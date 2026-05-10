@@ -27,6 +27,14 @@
         <i class="fas fa-store"></i>
         <span>Shop Settings</span>
     </a>
+    <a href="{{ route('seller.schemes') }}" class="nav-item">
+        <i class="fas fa-file-invoice"></i>
+        <span>Govt Schemes</span>
+    </a>
+    <a href="{{ route('seller.articles') }}" class="nav-item">
+        <i class="fas fa-bullhorn"></i>
+        <span>Textile Articles</span>
+    </a>
 @endsection
 
 @section('content')
