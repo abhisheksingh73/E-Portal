@@ -1,0 +1,14 @@
+/node_modules
+/vendor
+.env
+.git
+.gitignore
+/storage/*.key
+/public/storage
+/public/hot
+/public/build
+composer.lock
+package-lock.json
+.phpunit.result.cache
+Dockerfile
+.dockerignore
