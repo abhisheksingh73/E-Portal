@@ -14,6 +14,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+
+        $middleware->appendToGroup('web', [
+            \App\Http\Middleware\PreventBackHistory::class,
+        ]);
+
+        $middleware->redirectTo(
+            guests: '/login',
+            users: '/dashboard'
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

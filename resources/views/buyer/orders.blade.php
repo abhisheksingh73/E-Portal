@@ -93,8 +93,17 @@
                     <p style="font-size: 0.9rem; color: #64748b;">Sold by: <b>{{ $order->product->seller->name ?? 'Premium Seller' }}</b></p>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
-                    <button style="background: #1a2a6c; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;">Track Package</button>
-                    <button style="background: white; color: #1e293b; border: 1px solid #e2e8f0; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;">View Invoice</button>
+                    @if($order->status == 'shipped')
+                        <form action="{{ route('buyer.orders.confirm', $order) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" style="background: #10b981; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; width: 100%;">
+                                <i class="fas fa-check-double"></i> Mark Received
+                            </button>
+                        </form>
+                    @endif
+                    <button onclick="openTrackingModal('{{ $order->id }}', '{{ $order->status }}', '{{ $order->created_at->format('M d') }}')" style="background: #1a2a6c; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;">Track Package</button>
+                    <button onclick="openInvoiceModal('{{ $order->id }}', '{{ $order->product->name }}', '{{ $order->quantity }}', '{{ $order->total_price }}', '{{ $order->created_at->format('M d, Y') }}', '{{ $order->payment_method }}')" style="background: white; color: #1e293b; border: 1px solid #e2e8f0; padding: 10px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;">View Invoice</button>
                 </div>
             </div>
         </div>
@@ -106,4 +115,143 @@
         </div>
         @endforelse
     </div>
+
+    <!-- Tracking Modal -->
+    <div id="trackingModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: white; width: 500px; border-radius: 24px; padding: 40px; box-shadow: var(--shadow-lg);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                <h2 style="font-size: 1.5rem; font-weight: 800; color: #1a2a6c;">Track Shipment</h2>
+                <button onclick="closeModal('trackingModal')" style="background: none; border: none; font-size: 1.5rem; color: #94a3b8; cursor: pointer;"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="position: relative; padding-left: 40px; border-left: 3px solid #f1f5f9; margin-left: 10px;">
+                <div style="margin-bottom: 32px; position: relative;">
+                    <div style="position: absolute; left: -53px; width: 24px; height: 24px; border-radius: 50%; background: #1a2a6c; border: 4px solid white; box-shadow: 0 0 0 3px #1a2a6c;"></div>
+                    <h4 style="color: #1a2a6c; font-weight: 700; margin-bottom: 4px;">Order Placed</h4>
+                    <p style="font-size: 0.85rem; color: #94a3b8;" id="trackDate">Jan 12</p>
+                </div>
+                <div style="margin-bottom: 32px; position: relative;">
+                    <div id="stepPaid" style="position: absolute; left: -53px; width: 24px; height: 24px; border-radius: 50%; background: #cbd5e1; border: 4px solid white;"></div>
+                    <h4 id="textPaid" style="color: #94a3b8; font-weight: 700; margin-bottom: 4px;">Payment Confirmed</h4>
+                    <p style="font-size: 0.85rem; color: #94a3b8;">Processing at facility</p>
+                </div>
+                <div style="margin-bottom: 32px; position: relative;">
+                    <div id="stepShipped" style="position: absolute; left: -53px; width: 24px; height: 24px; border-radius: 50%; background: #cbd5e1; border: 4px solid white;"></div>
+                    <h4 id="textShipped" style="color: #94a3b8; font-weight: 700; margin-bottom: 4px;">Shipped</h4>
+                    <p style="font-size: 0.85rem; color: #94a3b8;">In transit to hub</p>
+                </div>
+                <div style="position: relative;">
+                    <div id="stepDelivered" style="position: absolute; left: -53px; width: 24px; height: 24px; border-radius: 50%; background: #cbd5e1; border: 4px solid white;"></div>
+                    <h4 id="textDelivered" style="color: #94a3b8; font-weight: 700; margin-bottom: 4px;">Delivered</h4>
+                    <p style="font-size: 0.85rem; color: #94a3b8;">Out for delivery</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div id="invoiceModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: white; width: 600px; border-radius: 24px; padding: 50px; box-shadow: var(--shadow-lg);" id="invoiceContent">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
+                <div>
+                    <h1 style="color: #1a2a6c; font-weight: 900; letter-spacing: -1px; margin-bottom: 8px;">E-PORTAL</h1>
+                    <p style="color: #94a3b8; font-size: 0.85rem;">Ministry of Textiles, Govt. of India</p>
+                </div>
+                <div style="text-align: right;">
+                    <h2 style="font-weight: 800; color: #1e293b;">INVOICE</h2>
+                    <p style="color: #94a3b8; font-size: 0.85rem;" id="invNumber">#ORD-123</p>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #f1f5f9;">
+                <div>
+                    <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 1px; margin-bottom: 12px;">Billed To</h4>
+                    <p style="font-weight: 700; color: #1e293b;">{{ auth()->user()->name }}</p>
+                    <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5;">{{ auth()->user()->address }}</p>
+                </div>
+                <div style="text-align: right;">
+                    <h4 style="text-transform: uppercase; font-size: 0.75rem; color: #94a3b8; letter-spacing: 1px; margin-bottom: 12px;">Invoice Date</h4>
+                    <p style="font-weight: 700; color: #1e293b;" id="invDate">May 10, 2026</p>
+                </div>
+            </div>
+
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #f1f5f9;">
+                        <th style="padding: 12px 0; text-align: left; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase;">Description</th>
+                        <th style="padding: 12px 0; text-align: center; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase;">Qty</th>
+                        <th style="padding: 12px 0; text-align: right; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 20px 0; font-weight: 700; color: #1e293b;" id="invProduct">Silk Saree</td>
+                        <td style="padding: 20px 0; text-align: center; color: #1e293b;" id="invQty">1</td>
+                        <td style="padding: 20px 0; text-align: right; font-weight: 800; color: #1a2a6c;" id="invTotal">₹4,500.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 24px; border-radius: 16px;">
+                <div>
+                    <p style="font-size: 0.8rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">Payment Method</p>
+                    <p style="font-weight: 800; color: #1a2a6c; font-size: 0.95rem;" id="invMethod">COD</p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 0.8rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin-bottom: 4px;">Amount Due</p>
+                    <p style="font-weight: 900; color: #1a2a6c; font-size: 1.5rem;" id="invGrandTotal">₹4,500.00</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px; display: flex; justify-content: flex-end; gap: 12px;">
+                <button onclick="closeModal('invoiceModal')" style="padding: 12px 24px; border: 1px solid #e2e8f0; background: white; border-radius: 12px; font-weight: 700; cursor: pointer;">Close</button>
+                <button onclick="window.print()" style="padding: 12px 24px; background: #1a2a6c; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">Print Invoice</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTrackingModal(id, status, date) {
+            document.getElementById('trackDate').innerText = date;
+            const steps = ['Paid', 'Shipped', 'Delivered'];
+            const statusIdx = status == 'pending' ? -1 : (status == 'shipped' ? 1 : 2);
+            
+            // Default reset
+            steps.forEach(s => {
+                document.getElementById('step'+s).style.background = '#cbd5e1';
+                document.getElementById('step'+s).style.boxShadow = 'none';
+                document.getElementById('text'+s).style.color = '#94a3b8';
+            });
+
+            // Highlight steps
+            if(statusIdx >= -1) { // Assuming payment confirmed once order is placed for tracking simplicity or based on payment_status
+                document.getElementById('stepPaid').style.background = '#1a2a6c';
+                document.getElementById('textPaid').style.color = '#1a2a6c';
+            }
+            if(statusIdx >= 1) {
+                document.getElementById('stepShipped').style.background = '#1a2a6c';
+                document.getElementById('textShipped').style.color = '#1a2a6c';
+            }
+            if(statusIdx >= 2) {
+                document.getElementById('stepDelivered').style.background = '#1a2a6c';
+                document.getElementById('textDelivered').style.color = '#1a2a6c';
+            }
+
+            document.getElementById('trackingModal').style.display = 'flex';
+        }
+
+        function openInvoiceModal(id, name, qty, total, date, method) {
+            document.getElementById('invNumber').innerText = '#ORD-' + id;
+            document.getElementById('invDate').innerText = date;
+            document.getElementById('invProduct').innerText = name;
+            document.getElementById('invQty').innerText = qty;
+            document.getElementById('invTotal').innerText = '₹' + parseFloat(total).toLocaleString();
+            document.getElementById('invGrandTotal').innerText = '₹' + parseFloat(total).toLocaleString();
+            document.getElementById('invMethod').innerText = method.toUpperCase();
+            document.getElementById('invoiceModal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+    </script>
 @endsection

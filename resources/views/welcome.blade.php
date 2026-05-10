@@ -326,17 +326,18 @@
             <a href="#services">Services</a>
             <a href="#contact">Contact</a>
             @if (Route::has('login'))
-                @guest
+                @auth
+                    <a href="{{ route('dashboard') }}" class="btn-login" style="background: var(--primary); color: white !important;">Dashboard</a>
+                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                        @csrf
+                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" style="color: #ef4444; font-weight: 600; text-decoration: none; margin-left: 15px;">Logout</a>
+                    </form>
+                @else
                     <a href="{{ route('login') }}" class="btn-login">Login</a>
                     @if (Route::has('register'))
                         <a href="{{ route('register') }}">Register</a>
                     @endif
-                @else
-                    <form method="POST" action="{{ route('logout') }}" style="display: inline;">
-                        @csrf
-                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" style="color: #ef4444; font-weight: 600; text-decoration: none;">Logout</a>
-                    </form>
-                @endguest
+                @endauth
             @endif
         </div>
     </nav>
@@ -386,84 +387,88 @@
         </div>
     </section>
 
-    <!-- Featured Textiles Section -->
-    @if($featuredProducts->count() > 0)
-    <section style="padding: 100px 4rem; background: #050505;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 50px;">
-            <div>
-                <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--accent);">Featured Masterpieces</h2>
-                <p style="color: rgba(255,255,255,0.6); margin-top: 10px;">Handpicked treasures from our finest regional artisans.</p>
+    <!-- About Section -->
+    <section id="about" style="padding: 100px 4rem; background: #050505; position: relative;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 4rem; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 2rem; color: var(--accent);">Our Mission</h2>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.8); margin-bottom: 1.5rem;">
+                    The Textile Ministry E-Portal is a dedicated initiative to digitalize India's rich textile heritage. We empower local weavers and artisans by providing them with a global stage to showcase their craftsmanship.
+                </p>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.8);">
+                    By bridging the gap between traditional techniques and modern commerce, we ensure that the heart of our culture continues to beat in the digital age.
+                </p>
             </div>
-            <a href="{{ route('buyer.marketplace') }}" style="color: white; text-decoration: none; font-weight: 600; border-bottom: 2px solid var(--accent); padding-bottom: 5px;">View Marketplace</a>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
-            @foreach($featuredProducts as $product)
-            <div class="role-card" style="padding: 0; text-align: left; overflow: hidden;">
-                <div style="height: 300px; background: #1a1a1a; overflow: hidden; position: relative;">
-                    @if($product->image)
-                        <img src="{{ asset('storage/' . $product->image) }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                    @else
-                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #333;">
-                            <i class="fas fa-image" style="font-size: 4rem;"></i>
-                        </div>
-                    @endif
-                    <div style="position: absolute; top: 15px; left: 15px; background: var(--accent); color: var(--text-dark); padding: 5px 12px; border-radius: 5px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase;">Featured</div>
+            <div style="flex: 1; min-width: 300px; position: relative;">
+                <div style="width: 100%; height: 400px; background: linear-gradient(45deg, #1a2a6c, #b21f1f); border-radius: 30px; position: relative; z-index: 1; overflow: hidden;">
+                    <img src="{{ asset('images/about_textile_craft.png') }}" alt="Textile Craft" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7;">
                 </div>
-                <div style="padding: 25px;">
-                    <span style="color: var(--accent); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">{{ $product->category }}</span>
-                    <h4 style="font-family: 'Playfair Display', serif; font-size: 1.25rem; margin: 8px 0;">{{ $product->name }}</h4>
-                    <p style="font-size: 0.9rem; color: rgba(255,255,255,0.5); margin-bottom: 20px;">{{ Str::limit($product->description, 60) }}</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 1.2rem; font-weight: 700;">₹{{ number_format($product->price) }}</span>
-                        <a href="{{ route('buyer.marketplace') }}" style="background: rgba(255,255,255,0.1); color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-size: 0.85rem; font-weight: 600;">Details</a>
+                <div style="position: absolute; top: -20px; left: -20px; width: 100%; height: 100%; border: 2px solid var(--accent); border-radius: 30px; z-index: 0;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" style="padding: 100px 4rem; background: #0a0a0a;">
+        <div style="text-align: center; margin-bottom: 60px;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 1rem;">Our Digital Services</h2>
+            <p style="color: rgba(255,255,255,0.6);">A comprehensive suite of tools designed for the textile industry.</p>
+        </div>
+        <div class="roles-grid">
+            <div class="role-card" style="text-align: left; padding: 2.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">🌐</div>
+                <h4 style="margin-bottom: 1rem; color: var(--accent);">Global Marketplace</h4>
+                <p style="font-size: 0.9rem;">A secure platform for sellers to list products and for buyers to discover authentic textiles from every corner of India.</p>
+            </div>
+            <div class="role-card" style="text-align: left; padding: 2.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">📜</div>
+                <h4 style="margin-bottom: 1rem; color: var(--accent);">Scheme Awareness</h4>
+                <p style="font-size: 0.9rem;">Real-time updates on government schemes, subsidies, and benefits tailored specifically for artisans and textile businesses.</p>
+            </div>
+            <div class="role-card" style="text-align: left; padding: 2.5rem;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">⚡</div>
+                <h4 style="margin-bottom: 1rem; color: var(--accent);">Direct Connectivity</h4>
+                <p style="font-size: 0.9rem;">Eliminate middlemen. Our inquiry and order system allows direct communication between the creator and the consumer.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" style="padding: 100px 4rem; background: #050505;">
+        <div class="role-card" style="max-width: 900px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 3rem; text-align: left; background: rgba(255,255,255,0.02); padding: 4rem;">
+            <div style="flex: 1; min-width: 250px;">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 1.5rem; color: var(--accent);">Get In Touch</h2>
+                <p style="color: rgba(255,255,255,0.6); margin-bottom: 2rem;">Have questions about the portal? Our team is here to help you every step of the way.</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="color: var(--accent); font-size: 1.2rem;">📍</span>
+                        <span>Ministry of Textiles, Udyog Bhawan, New Delhi</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="color: var(--accent); font-size: 1.2rem;">📧</span>
+                        <span>support@textile-portal.gov.in</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="color: var(--accent); font-size: 1.2rem;">📞</span>
+                        <span>+91 11 2306 1234</span>
                     </div>
                 </div>
             </div>
-            @endforeach
-        </div>
-    </section>
-    @endif
-
-    <!-- Ministry Highlights (Articles) -->
-    @if($latestArticles->count() > 0)
-    <section style="padding: 100px 4rem; background: #0a0a0a;">
-        <div style="text-align: center; margin-bottom: 60px;">
-            <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem;">Ministry Chronicles</h2>
-            <p style="color: rgba(255,255,255,0.6); margin-top: 10px;">Stories of heritage, innovation, and artisan empowerment.</p>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px; max-width: 1400px; margin: 0 auto;">
-            @foreach($latestArticles as $article)
-            <div style="display: flex; flex-direction: column; gap: 20px; group">
-                <div style="height: 250px; border-radius: 20px; overflow: hidden; position: relative;">
-                    @if($article->image)
-                        <img src="{{ asset('storage/' . $article->image) }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    @else
-                        <div style="width: 100%; height: 100%; background: #1a1a1a; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-newspaper" style="font-size: 3rem; color: #333;"></i>
-                        </div>
-                    @endif
-                </div>
-                <div>
-                    <span style="color: var(--accent); font-weight: 700; font-size: 0.8rem; text-transform: uppercase;">{{ $article->category }}</span>
-                    <h3 style="font-family: 'Playfair Display', serif; font-size: 1.5rem; margin: 10px 0; line-height: 1.3;">{{ $article->title }}</h3>
-                    <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem; line-height: 1.6;">{{ Str::limit($article->content, 120) }}</p>
-                    <a href="{{ route('buyer.articles') }}" style="display: inline-block; margin-top: 15px; color: white; text-decoration: none; font-weight: 600; font-size: 0.9rem;">Read Full Story <i class="fas fa-arrow-right" style="margin-left: 8px; font-size: 0.8rem;"></i></a>
-                </div>
+            <div style="flex: 1.5; min-width: 250px;">
+                <form action="#" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <input type="text" placeholder="Your Name" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; color: white; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+                    <input type="email" placeholder="Your Email" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; color: white; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+                    <textarea placeholder="Message" rows="4" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; color: white; outline: none; transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"></textarea>
+                    <button type="button" class="btn-primary" style="border: none; cursor: pointer;">Send Message</button>
+                </form>
             </div>
-            @endforeach
         </div>
     </section>
-    @endif
 
-    <!-- Government Schemes Brief -->
-    <section style="padding: 100px 4rem; text-align: center; background: linear-gradient(to bottom, #0a0a0a, #050505);">
-        <div style="max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 60px; border-radius: 30px;">
-            <i class="fas fa-file-invoice" style="font-size: 3rem; color: var(--accent); margin-bottom: 25px;"></i>
-            <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 20px;">Government Support & Schemes</h2>
-            <p style="color: rgba(255,255,255,0.7); line-height: 1.8; margin-bottom: 30px;">The Ministry of Textiles offers various schemes to support weavers, artisans, and MSMEs. From financial assistance to technology upgrades, explore how the government is empowering the industry.</p>
-            <a href="{{ route('buyer.schemes') }}" class="btn-primary">Explore All Schemes</a>
-        </div>
-    </section>
+    <footer style="padding: 40px; text-align: center; background: #000; border-top: 1px solid rgba(255,255,255,0.05);">
+        <p style="color: rgba(255,255,255,0.4); font-size: 0.9rem;">&copy; 2026 Textile Ministry E-Portal. All Rights Reserved.</p>
+    </footer>
 
     <script>
         window.addEventListener('scroll', function() {
@@ -489,11 +494,11 @@
             });
         }, observerOptions);
 
-        document.querySelectorAll('.role-card').forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(50px)';
-            card.style.transition = 'all 0.8s ease-out';
-            observer.observe(card);
+        document.querySelectorAll('.role-card, #about div, #services h2, #contact h2').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)';
+            observer.observe(el);
         });
     </script>
 </body>

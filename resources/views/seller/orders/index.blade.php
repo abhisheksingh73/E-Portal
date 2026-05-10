@@ -87,6 +87,10 @@
                         </span>
                     </td>
                     <td style="padding: 20px 24px; text-align: center;">
+                        <div style="margin-bottom: 8px;">
+                            <span style="font-size: 0.7rem; font-weight: 800; color: #64748b; text-transform: uppercase;">{{ $order->payment_method }}</span>
+                            <span style="font-size: 0.7rem; color: {{ $order->payment_status == 'paid' ? '#059669' : '#b45309' }}; font-weight: 700;">({{ strtoupper($order->payment_status) }})</span>
+                        </div>
                         @if($order->status == 'pending')
                             <div style="display: flex; justify-content: center; gap: 8px;">
                                 <form action="{{ route('seller.orders.updateStatus', $order) }}" method="POST">
@@ -102,8 +106,15 @@
                                     <button type="submit" style="background: white; color: #ef4444; border: 1px solid #ef4444; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer;" title="Cancel Order"><i class="fas fa-times"></i></button>
                                 </form>
                             </div>
+                        @elseif($order->status == 'shipped')
+                            <form action="{{ route('seller.orders.updateStatus', $order) }}" method="POST">
+                                @csrf
+                                @method('PATCH')
+                                <input type="hidden" name="status" value="delivered">
+                                <button type="submit" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Mark Delivered</button>
+                            </form>
                         @else
-                            <span style="color: #94a3b8; font-size: 0.8rem; font-style: italic;">No actions available</span>
+                            <span style="color: #94a3b8; font-size: 0.8rem; font-style: italic;">Fulfilled</span>
                         @endif
                     </td>
                 </tr>

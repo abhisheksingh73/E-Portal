@@ -1,6 +1,18 @@
 @extends('layouts.dashboard')
 
-@section('title', 'Admin Overview')
+@section('title', 'Ministry Control Center')
+
+@section('extra_css')
+<style>
+    .stat-badge {
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 4px 12px;
+        border-radius: 50px;
+        text-transform: uppercase;
+    }
+</style>
+@endsection
 
 @section('sidebar_links')
     <a href="{{ route('admin.dashboard') }}" class="nav-item active">
@@ -38,101 +50,109 @@
 @endsection
 
 @section('content')
-    @if(session('success'))
-        <div style="background: #ecfdf5; color: #059669; padding: 15px; border-radius: 12px; margin-bottom: 24px; font-weight: 600;">
-            <i class="fas fa-check-circle"></i> {{ session('success') }}
-        </div>
-    @endif
+    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(at 0% 0%, rgba(253, 187, 45, 0.05) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(26, 42, 108, 0.05) 0px, transparent 50%); z-index: -1;"></div>
 
-    @if(session('error'))
-        <div style="background: #fef2f2; color: #ef4444; padding: 15px; border-radius: 12px; margin-bottom: 24px; font-weight: 600;">
-            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-        </div>
-    @endif
-
-    <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+    <div class="header-flex stagger-item" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; animation-delay: 0.1s;">
         <div>
-            <h1 style="font-size: 2rem; font-weight: 800; color: #1a2a6c;">Ministry Control Center</h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Operational intelligence and system management.</p>
+            <h1 style="font-size: 2.5rem; font-weight: 900; color: #111827; letter-spacing: -1px; margin-bottom: 8px;">Ministry <span style="color: var(--primary);">Intelligence</span></h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem; font-weight: 500;">Welcome back, Administrator. Here's your system overview for today.</p>
         </div>
-        <div style="display: flex; gap: 12px;">
-            <button style="background: white; color: var(--text-dark); border: 1px solid #e2e8f0; padding: 12px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
-                <i class="fas fa-calendar-alt" style="margin-right: 8px;"></i> Last 30 Days
+        <div style="display: flex; gap: 15px;">
+            <button class="action-btn">
+                <i class="fas fa-download"></i> Export Reports
             </button>
-            <button style="background: #1a2a6c; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2);">
-                <i class="fas fa-plus" style="margin-right: 8px;"></i> New Action
+            <button class="action-btn" style="background: var(--primary); color: white; border: none;">
+                <i class="fas fa-plus"></i> New Initiative
             </button>
         </div>
     </div>
 
     <div class="stats-grid">
-        <div class="stat-card" style="border-left: 4px solid #4338ca;">
-            <div class="stat-icon" style="background: #eef2ff; color: #4338ca;">
+        <div class="stat-card stagger-item" style="animation-delay: 0.2s;">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #4338ca, #6366f1); color: white; box-shadow: 0 10px 15px rgba(67, 56, 202, 0.2);">
                 <i class="fas fa-users"></i>
             </div>
             <div class="stat-info">
                 <h3>Total Stakeholders</h3>
                 <p>{{ $stats['total_users'] }}</p>
-                <span style="color: #10b981; font-size: 0.8rem; font-weight: 600;"><i class="fas fa-trending-up"></i> +12% this month</span>
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                    <span class="stat-badge" style="background: #ecfdf5; color: #059669;">+12.5%</span>
+                    <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 600;">vs last month</span>
+                </div>
             </div>
         </div>
-        <div class="stat-card" style="border-left: 4px solid #b45309;">
-            <div class="stat-icon" style="background: #fffbeb; color: #b45309;">
+        <div class="stat-card stagger-item" style="animation-delay: 0.3s;">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #b45309, #d97706); color: white; box-shadow: 0 10px 15px rgba(180, 83, 9, 0.2);">
                 <i class="fas fa-store"></i>
             </div>
             <div class="stat-info">
                 <h3>Registered Sellers</h3>
                 <p>{{ $stats['active_sellers'] }}</p>
-                <span style="color: #10b981; font-size: 0.8rem; font-weight: 600;"><i class="fas fa-check-circle"></i> Verified assets</span>
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                    <span class="stat-badge" style="background: #fffbeb; color: #b45309;">Verified</span>
+                    <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 600;">Full compliance</span>
+                </div>
             </div>
         </div>
-        <div class="stat-card" style="border-left: 4px solid #047857;">
-            <div class="stat-icon" style="background: #ecfdf5; color: #047857;">
+        <div class="stat-card stagger-item" style="animation-delay: 0.4s;">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #047857, #10b981); color: white; box-shadow: 0 10px 15px rgba(4, 120, 87, 0.2);">
                 <i class="fas fa-hand-holding-heart"></i>
             </div>
             <div class="stat-info">
                 <h3>Active Buyers</h3>
                 <p>{{ $stats['active_buyers'] }}</p>
-                <span style="color: #10b981; font-size: 0.8rem; font-weight: 600;"><i class="fas fa-shopping-bag"></i> High activity</span>
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                    <span class="stat-badge" style="background: #ecfdf5; color: #059669;">High Traffic</span>
+                </div>
             </div>
         </div>
-        <div class="stat-card" style="border-left: 4px solid #b91c1c;">
-            <div class="stat-icon" style="background: #fef2f2; color: #b91c1c;">
+        <div class="stat-card stagger-item" style="animation-delay: 0.5s;">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #b91c1c, #ef4444); color: white; box-shadow: 0 10px 15px rgba(185, 28, 28, 0.2);">
                 <i class="fas fa-clock"></i>
             </div>
             <div class="stat-info">
-                <h3>Pending Approvals</h3>
+                <h3>Pending Actions</h3>
                 <p>{{ $stats['pending_approvals'] }}</p>
-                <span style="color: #ef4444; font-size: 0.8rem; font-weight: 600;">Attention required</span>
+                <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                    <span class="stat-badge" style="background: #fef2f2; color: #ef4444;">Urgent</span>
+                </div>
             </div>
         </div>
     </div>
 
     @if($pendingSellers->count() > 0)
-    <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-left: 4px solid #fdbb2d; margin-bottom: 32px;">
-        <div class="card-header" style="padding: 24px; border-bottom: 1px solid #f1f5f9; background: #fffdf5;">
-            <h2 class="card-title" style="font-weight: 700; color: #854d0e;"><i class="fas fa-user-clock"></i> Pending Seller Approvals</h2>
+    <div class="card stagger-item" style="padding: 0; overflow: hidden; border: 2px solid #fffbeb; animation-delay: 0.6s;">
+        <div style="padding: 32px; background: linear-gradient(to right, #fffbeb, transparent); border-bottom: 1px solid #fef3c7; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="font-size: 1.4rem; font-weight: 800; color: #92400e; display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-user-shield"></i> Priority Seller Approvals
+                </h2>
+                <p style="font-size: 0.9rem; color: #b45309; font-weight: 500; margin-top: 4px;">These artisans are waiting for portal verification.</p>
+            </div>
+            <span style="background: #fef3c7; color: #92400e; padding: 6px 16px; border-radius: 50px; font-weight: 800; font-size: 0.8rem;">{{ $pendingSellers->count() }} PENDING</span>
         </div>
-        <div style="padding: 0 24px 24px 24px;">
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="text-align: left; border-bottom: 1px solid #f1f5f9;">
-                        <th style="padding: 16px 12px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Seller Name</th>
-                        <th style="padding: 16px 12px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Email</th>
-                        <th style="padding: 16px 12px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Action</th>
-                    </tr>
-                </thead>
+        <div style="padding: 0 32px 32px 32px;">
+            <table style="width: 100%; border-collapse: separate; border-spacing: 0 12px;">
                 <tbody>
                     @foreach($pendingSellers as $seller)
-                    <tr style="border-bottom: 1px solid #f8fafc;">
-                        <td style="padding: 16px 12px; font-weight: 600;">{{ $seller->name }}</td>
-                        <td style="padding: 16px 12px; color: var(--text-muted);">{{ $seller->email }}</td>
-                        <td style="padding: 16px 12px;">
-                            <form action="{{ route('admin.users.approve', $seller) }}" method="POST">
+                    <tr style="background: #fafaf9; border-radius: 16px;">
+                        <td style="padding: 20px; border-radius: 16px 0 0 16px;">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="width: 44px; height: 44px; border-radius: 12px; background: white; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #b45309; border: 1px solid #fde68a;">
+                                    {{ strtoupper(substr($seller->name, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 700; color: #1e293b;">{{ $seller->name }}</div>
+                                    <div style="font-size: 0.85rem; color: #64748b;">{{ $seller->email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="padding: 20px; text-align: right; border-radius: 0 16px 16px 0;">
+                            <form action="{{ route('admin.users.approve', $seller) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                                    Approve Account
+                                <button type="submit" style="background: #1a2a6c; color: white; border: none; padding: 10px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: var(--transition);" onmouseover="this.style.background='#243b55'" onmouseout="this.style.background='#1a2a6c'">
+                                    Verify Account
                                 </button>
                             </form>
                         </td>
@@ -144,57 +164,49 @@
     </div>
     @endif
 
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
-        <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-            <div class="card-header" style="padding: 24px; border-bottom: 1px solid #f1f5f9; margin-bottom: 0;">
-                <h2 class="card-title" style="font-weight: 700;">Recent User Onboarding</h2>
-                <a href="{{ route('admin.users') }}" style="color: #4338ca; font-size: 0.9rem; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 4px;">
-                    View Directory <i class="fas fa-arrow-right" style="font-size: 0.7rem;"></i>
-                </a>
+    <div style="display: grid; grid-template-columns: 2fr 1.2fr; gap: 40px;">
+        <div class="card stagger-item" style="padding: 0; overflow: hidden; animation-delay: 0.7s;">
+            <div style="padding: 32px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-size: 1.4rem; font-weight: 800; color: #111827;">Ecosystem Growth</h2>
+                <a href="{{ route('admin.users') }}" style="color: var(--primary); font-weight: 700; text-decoration: none; font-size: 0.9rem;">Full Directory <i class="fas fa-chevron-right" style="font-size: 0.7rem;"></i></a>
             </div>
-            <div style="padding: 0 24px 24px 24px;">
+            <div style="padding: 0 32px 32px 32px;">
                 <table style="width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr style="text-align: left; border-bottom: 1px solid #f1f5f9;">
-                            <th style="padding: 16px 12px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">User</th>
-                            <th style="padding: 16px 12px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Role</th>
-                            <th style="padding: 16px 12px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Joined</th>
-                            <th style="padding: 16px 12px; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Action</th>
+                        <tr style="text-align: left;">
+                            <th style="padding: 20px 12px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Stakeholder</th>
+                            <th style="padding: 20px 12px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">Role & Clearance</th>
+                            <th style="padding: 20px 12px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; text-align: right;">Onboarded</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($recentUsers as $user)
-                        <tr style="border-bottom: 1px solid #f8fafc; transition: background 0.3s;" onmouseover="this.style.background='#fcfdff'" onmouseout="this.style.background='transparent'">
-                            <td style="padding: 16px 12px;">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div style="width: 36px; height: 36px; border-radius: 10px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #4338ca; font-size: 0.9rem;">
+                        <tr style="border-top: 1px solid #f8fafc;">
+                            <td style="padding: 20px 12px;">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div style="width: 40px; height: 40px; border-radius: 12px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary); font-size: 0.9rem;">
                                         {{ strtoupper(substr($user->name, 0, 1)) }}
                                     </div>
                                     <div>
-                                        <div style="font-weight: 600; font-size: 0.95rem;">{{ $user->name }}</div>
-                                        <div style="font-size: 0.8rem; color: var(--text-muted);">{{ $user->email }}</div>
+                                        <div style="font-weight: 700; color: #1e293b; font-size: 1rem;">{{ $user->name }}</div>
+                                        <div style="font-size: 0.85rem; color: #94a3b8;">{{ $user->email }}</div>
                                     </div>
                                 </div>
                             </td>
-                            <td style="padding: 16px 12px;">
+                            <td style="padding: 20px 12px;">
                                 <span style="
-                                    padding: 6px 12px; 
-                                    border-radius: 50px; 
-                                    font-size: 0.75rem; 
-                                    font-weight: 700; 
-                                    text-transform: capitalize;
+                                    padding: 6px 14px; 
+                                    border-radius: 8px; 
+                                    font-size: 0.7rem; 
+                                    font-weight: 800; 
+                                    text-transform: uppercase;
                                     {{ $user->role == 'admin' ? 'background: #eef2ff; color: #4338ca;' : ($user->role == 'seller' ? 'background: #fffbeb; color: #b45309;' : 'background: #ecfdf5; color: #047857;') }}
                                 ">
                                     {{ $user->role }}
                                 </span>
                             </td>
-                            <td style="padding: 16px 12px; color: var(--text-muted); font-size: 0.9rem;">
+                            <td style="padding: 20px 12px; color: #64748b; font-weight: 600; font-size: 0.9rem; text-align: right;">
                                 {{ $user->created_at->format('M d, Y') }}
-                            </td>
-                            <td style="padding: 16px 12px;">
-                                <button style="background: none; border: none; color: #94a3b8; cursor: pointer; transition: color 0.3s;" onmouseover="this.style.color='#4338ca'" onmouseout="this.style.color='#94a3b8'">
-                                    <i class="fas fa-ellipsis-v"></i>
-                                </button>
                             </td>
                         </tr>
                         @endforeach
@@ -203,39 +215,52 @@
             </div>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-            <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); background: white;">
-                <div style="padding: 20px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="font-size: 1.1rem; font-weight: 700; color: #1e293b;"><i class="fas fa-stream" style="color: #4338ca; margin-right: 8px;"></i> Live Activity Feed</h3>
-                    <span style="font-size: 0.7rem; font-weight: 800; background: #ecfdf5; color: #059669; padding: 2px 8px; border-radius: 4px; text-transform: uppercase;">Real-time</span>
+        <div style="display: flex; flex-direction: column; gap: 32px;">
+            <div class="card stagger-item" style="padding: 0; overflow: hidden; animation-delay: 0.8s;">
+                <div style="padding: 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: #111827; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-satellite-dish" style="color: var(--primary);"></i> Intelligence Feed
+                    </h3>
+                    <span style="font-size: 0.65rem; font-weight: 900; background: #ecfdf5; color: #059669; padding: 4px 10px; border-radius: 50px; text-transform: uppercase; border: 1px solid #d1fae5;">Live</span>
                 </div>
-                <div style="padding: 20px; max-height: 500px; overflow-y: auto;">
+                <div style="padding: 24px; max-height: 400px; overflow-y: auto;">
                     @forelse($activities as $activity)
-                    <div style="display: flex; gap: 16px; margin-bottom: 20px; position: relative;">
-                        <div style="flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: {{ $activity->type == 'registration' ? '#eef2ff' : ($activity->type == 'approval' ? '#ecfdf5' : '#fffbeb') }}; display: flex; align-items: center; justify-content: center; color: {{ $activity->type == 'registration' ? '#4338ca' : ($activity->type == 'approval' ? '#059669' : '#b45309') }}; font-size: 0.9rem;">
-                            <i class="fas {{ $activity->type == 'registration' ? 'fa-user-plus' : ($activity->type == 'approval' ? 'fa-check-circle' : 'fa-box') }}"></i>
+                    <div style="display: flex; gap: 16px; margin-bottom: 24px; position: relative;">
+                        <div style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; background: {{ $activity->type == 'registration' ? '#eef2ff' : ($activity->type == 'approval' ? '#ecfdf5' : '#fffbeb') }}; display: flex; align-items: center; justify-content: center; color: {{ $activity->type == 'registration' ? '#4338ca' : ($activity->type == 'approval' ? '#059669' : '#b45309') }}; font-size: 1rem;">
+                            <i class="fas {{ $activity->type == 'registration' ? 'fa-user-plus' : ($activity->type == 'approval' ? 'fa-check-double' : 'fa-box-open') }}"></i>
                         </div>
                         <div style="flex: 1;">
-                            <p style="font-size: 0.9rem; color: #1e293b; line-height: 1.4; margin-bottom: 4px;">{{ $activity->message }}</p>
-                            <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 500;">{{ $activity->created_at->diffForHumans() }}</span>
+                            <p style="font-size: 0.95rem; color: #1e293b; line-height: 1.5; font-weight: 500;">{{ $activity->message }}</p>
+                            <span style="font-size: 0.8rem; color: #94a3b8; font-weight: 600; display: flex; align-items: center; gap: 5px; margin-top: 4px;">
+                                <i class="far fa-clock"></i> {{ $activity->created_at->diffForHumans() }}
+                            </span>
                         </div>
                     </div>
                     @empty
                     <div style="text-align: center; padding: 40px 0;">
-                        <i class="fas fa-history" style="font-size: 2rem; color: #e2e8f0; margin-bottom: 12px;"></i>
-                        <p style="color: #94a3b8; font-size: 0.9rem;">No recent activities logged.</p>
+                        <i class="fas fa-history" style="font-size: 2.5rem; color: #e2e8f0; margin-bottom: 16px;"></i>
+                        <p style="color: #94a3b8; font-size: 1rem; font-weight: 600;">System is waiting for signals...</p>
                     </div>
                     @endforelse
                 </div>
             </div>
 
-            <div class="card" style="border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); background: linear-gradient(135deg, #1a2a6c, #243b55); color: white;">
-                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">Ministry Intelligence</h3>
-                <p style="font-size: 0.85rem; opacity: 0.8; line-height: 1.6; margin-bottom: 16px;">System monitoring active. High engagement detected in <b>Handloom Silk</b> categories this week.</p>
-                <div style="padding: 12px; background: rgba(255,255,255,0.1); border-radius: 12px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: 700;">
-                        <span>Uptime</span>
-                        <span>99.98%</span>
+            <div class="card stagger-item" style="background: linear-gradient(135deg, #1a2a6c, #243b55); border: none; color: white; position: relative; overflow: hidden; animation-delay: 0.9s;">
+                <div style="position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+                <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 16px; position: relative;">System Health</h3>
+                <div style="display: grid; gap: 20px; position: relative;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; opacity: 0.8;">
+                            <span>Operational Uptime</span>
+                            <span>99.98%</span>
+                        </div>
+                        <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;">
+                            <div style="width: 99.98%; height: 100%; background: var(--accent); border-radius: 10px;"></div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 16px;">
+                        <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; margin-bottom: 8px;">Market Signal</div>
+                        <div style="font-size: 1rem; font-weight: 700;">High demand detected in <span style="color: var(--accent);">Silk Weaves</span>.</div>
                     </div>
                 </div>
             </div>

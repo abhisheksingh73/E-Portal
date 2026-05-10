@@ -83,7 +83,7 @@
             </div>
             <div class="stat-info">
                 <h3>Total Spent</h3>
-                <p>₹{{ number_format($stats['total_spent'] / 1000, 1) }}k</p>
+                <p>₹{{ number_format($stats['total_spent']) }}</p>
                 <span style="color: #ca8a04; font-size: 0.8rem; font-weight: 700;">Lifetime savings</span>
             </div>
         </div>
@@ -95,7 +95,7 @@
             <a href="{{ route('buyer.marketplace') }}" style="color: #4338ca; font-size: 0.9rem; font-weight: 700; text-decoration: none;">Explore Gallery <i class="fas fa-arrow-right" style="margin-left: 5px;"></i></a>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; padding: 24px;">
-            @foreach($recommendedProducts as $product)
+            @forelse($recommendedProducts as $product)
             <div style="border-radius: 16px; border: 1px solid #f1f5f9; overflow: hidden; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 15px 30px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                 <div style="height: 180px; background: #f8fafc; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
                     <span style="position: absolute; top: 12px; left: 12px; background: #1a2a6c; color: white; font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 50px;">{{ $product->category }}</span>
@@ -114,20 +114,24 @@
                     </div>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div style="text-align: center; padding: 40px; color: #94a3b8;">
+                <p>No products available at the moment.</p>
+            </div>
+            @endforelse
         </div>
     </div>
     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; margin-top: 32px;">
         <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
             <div style="padding: 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-                <h2 style="font-weight: 700; color: #1e293b;">Community Updates</h2>
-                <span style="font-size: 0.75rem; font-weight: 700; color: #1a2a6c;">LATEST NEWS</span>
+                <h2 style="font-weight: 700; color: #1e293b;">Recent Activity</h2>
+                <span style="font-size: 0.75rem; font-weight: 700; color: #1a2a6c;">YOUR TIMELINE</span>
             </div>
             <div style="padding: 24px;">
                 @forelse($activities as $activity)
                 <div style="display: flex; gap: 16px; margin-bottom: 24px;">
                     <div style="width: 40px; height: 40px; border-radius: 50%; background: #f8fafc; border: 1px solid #eef2ff; display: flex; align-items: center; justify-content: center; color: #4338ca; font-size: 1rem;">
-                        <i class="fas {{ $activity->type == 'product_listing' ? 'fa-sparkles' : 'fa-info-circle' }}"></i>
+                        <i class="fas {{ $activity->type == 'purchase' ? 'fa-shopping-bag' : ($activity->type == 'delivery_confirmation' ? 'fa-check-double' : 'fa-info-circle') }}"></i>
                     </div>
                     <div style="flex: 1;">
                         <p style="font-size: 0.95rem; color: #475569; line-height: 1.5; margin-bottom: 4px;">{{ $activity->message }}</p>
@@ -135,9 +139,9 @@
                     </div>
                 </div>
                 @empty
-                <div style="text-align: center; padding: 40px 0; color: #94a3b8;">
-                    <i class="fas fa-satellite" style="font-size: 2rem; margin-bottom: 12px; opacity: 0.2;"></i>
-                    <p>Marketplace updates will appear here.</p>
+                <div style="text-align: center; padding: 60px 0; color: #94a3b8;">
+                    <i class="fas fa-history" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.1;"></i>
+                    <p>No recent activity found.</p>
                 </div>
                 @endforelse
             </div>

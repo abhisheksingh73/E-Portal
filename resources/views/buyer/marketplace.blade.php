@@ -160,15 +160,70 @@
                     </div>
                 </div>
 
-                <div style="margin-bottom: 32px;">
-                    <label style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 10px; font-size: 0.9rem;">Shipping Address</label>
-                    <textarea name="shipping_address" required rows="4" placeholder="Enter your full street address, city, and state..." style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s; resize: none;" onfocus="this.style.borderColor='#1a2a6c'">{{ auth()->user()->address }}</textarea>
+                <div style="margin-bottom: 24px;">
+                    <label style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 12px; font-size: 0.9rem;">Shipping Address</label>
+                    
+                    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                        <button type="button" style="flex: 1; padding: 8px; border: 1px solid #1a2a6c; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; background: #eef2ff;" id="modalSavedBtn" onclick="toggleModalAddress('saved')">Saved Address</button>
+                        <button type="button" style="flex: 1; padding: 8px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; background: white;" id="modalNewBtn" onclick="toggleModalAddress('new')">New Address</button>
+                    </div>
+
+                    <textarea name="shipping_address" id="modalAddressInput" required rows="3" placeholder="Enter full delivery address..." style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-family: inherit; font-size: 0.9rem; resize: none; background: #f8fafc;" readonly>{{ auth()->user()->address }}</textarea>
+                    
+                    @error('shipping_address')
+                        <div style="color: #ef4444; font-size: 0.75rem; font-weight: 700; margin-top: 5px;">
+                            <i class="fas fa-exclamation-triangle"></i> {{ $message }}
+                        </div>
+                    @enderror
                 </div>
 
-                <button type="submit" style="width: 100%; background: #1a2a6c; color: white; border: none; padding: 18px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 1.1rem; box-shadow: 0 10px 15px -3px rgba(26, 42, 108, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 20px 25px -5px rgba(26, 42, 108, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 15px -3px rgba(26, 42, 108, 0.3)'">
+                <div style="margin-bottom: 32px;">
+                    <label style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 12px; font-size: 0.9rem;">Payment Method</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 2px solid #1a2a6c; border-radius: 12px; cursor: pointer;" class="modal-pay-method" onclick="selectModalMethod(this)">
+                            <input type="radio" name="payment_method" value="cod" checked style="accent-color: #1a2a6c;">
+                            <span style="font-weight: 700; font-size: 0.85rem;">COD</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer;" class="modal-pay-method" onclick="selectModalMethod(this)">
+                            <input type="radio" name="payment_method" value="online" style="accent-color: #1a2a6c;">
+                            <span style="font-weight: 700; font-size: 0.85rem;">Online</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" style="width: 100%; background: #1a2a6c; color: white; border: none; padding: 18px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 1.1rem; box-shadow: 0 10px 15px -3px rgba(26, 42, 108, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                     Place Order Now
                 </button>
             </form>
+
+            <script>
+                const modalSavedAddr = `{{ auth()->user()->address }}`;
+                function toggleModalAddress(type) {
+                    const input = document.getElementById('modalAddressInput');
+                    const bSaved = document.getElementById('modalSavedBtn');
+                    const bNew = document.getElementById('modalNewBtn');
+                    
+                    if(type === 'saved') {
+                        input.value = modalSavedAddr;
+                        input.readOnly = true;
+                        input.style.background = '#f8fafc';
+                        bSaved.style.borderColor = '#1a2a6c'; bSaved.style.background = '#eef2ff';
+                        bNew.style.borderColor = '#e2e8f0'; bNew.style.background = 'white';
+                    } else {
+                        input.value = '';
+                        input.readOnly = false;
+                        input.style.background = 'white';
+                        input.focus();
+                        bNew.style.borderColor = '#1a2a6c'; bNew.style.background = '#eef2ff';
+                        bSaved.style.borderColor = '#e2e8f0'; bSaved.style.background = 'white';
+                    }
+                }
+                function selectModalMethod(el) {
+                    document.querySelectorAll('.modal-pay-method').forEach(m => m.style.borderColor = '#e2e8f0');
+                    el.style.borderColor = '#1a2a6c';
+                    el.querySelector('input').checked = true;
+                }
+            </script>
         </div>
     </div>
 

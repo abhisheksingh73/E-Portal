@@ -13,15 +13,25 @@ class SellerController extends Controller
 {
     public function dashboard()
     {
+        $userId = Auth::id();
+        
         $stats = [
-            'total_sales' => '₹45,000',
-            'active_listings' => Product::where('user_id', Auth::id())->count(),
-            'pending_orders' => 5,
-            'customer_rating' => '4.9/5',
+            'total_sales' => Order::whereHas('product', function($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                })->where('payment_status', 'paid')->sum('total_price'),
+            'active_listings' => Product::where('user_id', $userId)->where('status', 'active')->count(),
+            'pending_orders' => Order::whereHas('product', function($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                })->where('status', 'pending')->count(),
+            'customer_rating' => '4.9/5', // Static for now
         ];
 
-        $activities = \App\Models\Activity::latest()->take(6)->get();
-        
+        $activities = \App\Models\Activity::where('user_id', $userId)
+            ->orWhereNull('user_id')
+            ->latest()
+            ->take(6)
+            ->get();
+            
         return view('seller.dashboard', compact('stats', 'activities'));
     }
 
@@ -149,12 +159,19 @@ class SellerController extends Controller
             'status' => 'required|in:pending,shipped,delivered,cancelled',
         ]);
 
-        $order->update(['status' => $request->status]);
+        $updateData = ['status' => $request->status];
+
+        // If marked as delivered and it was Cash on Delivery, mark as paid
+        if ($request->status === 'delivered' && $order->payment_method === 'cod') {
+            $updateData['payment_status'] = 'paid';
+        }
+
+        $order->update($updateData);
 
         \App\Models\Activity::create([
             'user_id' => Auth::id(),
             'type' => 'order_status',
-            'message' => "Seller updated order #ORD-{$order->id} status to '{$request->status}'.",
+            'message' => "Seller updated order #ORD-{$order->id} status to '{$request->status}'" . ($request->status === 'delivered' ? " and confirmed payment collection." : "."),
         ]);
 
         return back()->with('success', "Order #ORD-{$order->id} status updated to " . strtoupper($request->status));
@@ -162,7 +179,25 @@ class SellerController extends Controller
 
     public function earnings()
     {
-        return view('seller.earnings');
+        // Online payments: Count if payment_status is 'paid'
+        // COD payments: Count only if status is 'delivered'
+        $deliveredOrders = Order::whereHas('product', function($query) {
+            $query->where('user_id', Auth::id());
+        })
+        ->where(function($query) {
+            $query->where('payment_method', 'online')->where('payment_status', 'paid')
+                  ->orWhere(function($q) {
+                      $q->where('payment_method', 'cod')->where('status', 'delivered');
+                  });
+        })
+        ->with('product', 'buyer')
+        ->latest()
+        ->get();
+
+        $totalEarnings = $deliveredOrders->sum('total_price');
+        $availableForPayout = $totalEarnings * 0.95; // 5% platform fee
+
+        return view('seller.earnings', compact('deliveredOrders', 'totalEarnings', 'availableForPayout'));
     }
 
     public function settings()

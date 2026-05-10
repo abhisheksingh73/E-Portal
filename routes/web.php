@@ -6,10 +6,13 @@ use App\Http\Controllers\SellerController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    $featuredProducts = \App\Models\Product::where('is_featured', true)->where('status', 'active')->take(6)->get();
-    $latestArticles = \App\Models\Article::where('status', 'published')->latest()->take(3)->get();
-    return view('welcome', compact('featuredProducts', 'latestArticles'));
+    return view('welcome');
 });
+
+Route::get('/dashboard', function () {
+    $role = auth()->user()->role;
+    return redirect()->route($role . '.dashboard');
+})->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 
@@ -59,6 +62,9 @@ Route::middleware('auth')->group(function () {
         Route::patch('/cart/{cart}', [BuyerController::class, 'updateCart'])->name('buyer.cart.update');
         Route::delete('/cart/{cart}', [BuyerController::class, 'removeFromCart'])->name('buyer.cart.destroy');
         Route::post('/cart/checkout', [BuyerController::class, 'checkout'])->name('buyer.cart.checkout');
+        Route::post('/cart/process-payment', [BuyerController::class, 'processOnlinePayment'])->name('buyer.cart.process_payment');
+        Route::patch('/orders/{order}/confirm', [BuyerController::class, 'confirmDelivery'])->name('buyer.orders.confirm');
+
 
         Route::get('/settings', [BuyerController::class, 'settings'])->name('buyer.settings');
         Route::patch('/settings', [BuyerController::class, 'updateSettings'])->name('buyer.settings.update');

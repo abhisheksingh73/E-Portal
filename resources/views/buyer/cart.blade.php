@@ -147,14 +147,88 @@
                 @if($cartItems->isNotEmpty())
                 <form action="{{ route('buyer.cart.checkout') }}" method="POST">
                     @csrf
+                    
                     <div style="margin-bottom: 24px;">
-                        <label style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 10px; font-size: 0.9rem;">Shipping Address</label>
-                        <textarea name="shipping_address" required rows="3" placeholder="Enter full delivery address..." style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-family: inherit; font-size: 0.95rem; resize: none;">{{ auth()->user()->address }}</textarea>
+                        <label style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 12px; font-size: 0.9rem;">Shipping Address</label>
+                        
+                        <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                            <label style="flex: 1; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.8rem; font-weight: 700;" id="labelSaved" onclick="toggleAddress('saved')">
+                                <input type="radio" name="address_type" value="saved" checked style="display: none;"> Saved Address
+                            </label>
+                            <label style="flex: 1; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; font-size: 0.8rem; font-weight: 700;" id="labelNew" onclick="toggleAddress('new')">
+                                <input type="radio" name="address_type" value="new" style="display: none;"> New Address
+                            </label>
+                        </div>
+
+                        <textarea name="shipping_address" id="addressInput" required rows="3" placeholder="Enter full delivery address..." style="width: 100%; padding: 16px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; font-family: inherit; font-size: 0.95rem; resize: none; transition: all 0.3s;">{{ auth()->user()->address }}</textarea>
+                        
+                        @error('shipping_address')
+                            <div style="color: #ef4444; font-size: 0.8rem; font-weight: 700; margin-top: 8px;">
+                                <i class="fas fa-exclamation-triangle"></i> {{ $message }}
+                            </div>
+                        @enderror
                     </div>
+
+                    <script>
+                        const savedAddr = `{{ auth()->user()->address }}`;
+                        function toggleAddress(type) {
+                            const input = document.getElementById('addressInput');
+                            const lSaved = document.getElementById('labelSaved');
+                            const lNew = document.getElementById('labelNew');
+                            
+                            if(type === 'saved') {
+                                input.value = savedAddr;
+                                input.readOnly = true;
+                                input.style.background = '#f8fafc';
+                                lSaved.style.borderColor = '#1a2a6c'; lSaved.style.background = '#eef2ff';
+                                lNew.style.borderColor = '#e2e8f0'; lNew.style.background = 'white';
+                            } else {
+                                input.value = '';
+                                input.readOnly = false;
+                                input.style.background = 'white';
+                                input.focus();
+                                lNew.style.borderColor = '#1a2a6c'; lNew.style.background = '#eef2ff';
+                                lSaved.style.borderColor = '#e2e8f0'; lSaved.style.background = 'white';
+                            }
+                        }
+                        // Init
+                        toggleAddress('saved');
+                    </script>
+
+                    <div style="margin-bottom: 32px;">
+                        <label style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 12px; font-size: 0.9rem;">Payment Method</label>
+                        <div style="display: grid; gap: 12px;">
+                            <label style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.3s;" class="pay-method" onclick="selectMethod(this)">
+                                <input type="radio" name="payment_method" value="cod" checked style="accent-color: #1a2a6c; width: 20px; height: 20px;">
+                                <div>
+                                    <div style="font-weight: 700; color: #1e293b;">Cash on Delivery (COD)</div>
+                                    <div style="font-size: 0.8rem; color: #64748b;">Pay when you receive the package</div>
+                                </div>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.3s;" class="pay-method" onclick="selectMethod(this)">
+                                <input type="radio" name="payment_method" value="online" style="accent-color: #1a2a6c; width: 20px; height: 20px;">
+                                <div>
+                                    <div style="font-weight: 700; color: #1e293b;">Online Payment</div>
+                                    <div style="font-size: 0.8rem; color: #64748b;">Credit/Debit Card, UPI, Net Banking</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
                     <button type="submit" style="width: 100%; background: #1a2a6c; color: white; border: none; padding: 18px; border-radius: 14px; font-weight: 800; cursor: pointer; font-size: 1.1rem; box-shadow: 0 10px 15px -3px rgba(26, 42, 108, 0.3); transition: all 0.3s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
                         Secure Checkout
                     </button>
                 </form>
+
+                <script>
+                    function selectMethod(el) {
+                        document.querySelectorAll('.pay-method').forEach(m => m.style.borderColor = '#e2e8f0');
+                        el.style.borderColor = '#1a2a6c';
+                        el.querySelector('input').checked = true;
+                    }
+                    // Initialize first one
+                    document.querySelector('.pay-method').style.borderColor = '#1a2a6c';
+                </script>
                 @else
                 <button disabled style="width: 100%; background: #cbd5e1; color: white; border: none; padding: 18px; border-radius: 14px; font-weight: 800; cursor: not-allowed;">
                     Cart is Empty

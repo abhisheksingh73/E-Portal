@@ -46,17 +46,17 @@
         </div>
     @endif
 
-    <div class="header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+    <div class="header-flex stagger-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; animation-delay: 0.1s;">
         <div>
-            <h1 style="font-size: 2rem; font-weight: 800; color: #1a2a6c;">User Directory</h1>
-            <p style="color: var(--text-muted); font-size: 1.1rem;">Manage ministry stakeholders and portal access.</p>
+            <h1 style="font-size: 2.5rem; font-weight: 900; color: #111827; letter-spacing: -1px; margin-bottom: 8px;">User <span style="color: var(--primary);">Directory</span></h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem; font-weight: 500;">Manage ministry stakeholders and portal access control.</p>
         </div>
-        <button style="background: #1a2a6c; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2);">
-            <i class="fas fa-user-plus" style="margin-right: 8px;"></i> Add New User
+        <button class="action-btn" style="background: var(--primary); color: white; border: none;">
+            <i class="fas fa-user-plus"></i> Add New User
         </button>
     </div>
 
-    <div class="card" style="padding: 0; overflow: hidden; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+    <div class="card stagger-item" style="padding: 0; overflow: hidden; animation-delay: 0.2s;">
         <div style="padding: 24px; border-bottom: 1px solid #f1f5f9; background: #fafbfc; display: flex; justify-content: space-between; align-items: center;">
             <div style="display: flex; gap: 16px;">
                 <div style="position: relative;">

@@ -57,7 +57,7 @@
             </div>
             <div class="stat-info">
                 <h3>Total Earnings</h3>
-                <p>{{ $stats['total_sales'] }}</p>
+                <p>₹{{ number_format($stats['total_sales']) }}</p>
                 <span style="color: #059669; font-size: 0.8rem; font-weight: 700;"><i class="fas fa-arrow-up"></i> +15% vs last month</span>
             </div>
         </div>
