@@ -11,6 +11,7 @@ class Inquiry extends Model
         'seller_id',
         'product_id',
         'message',
+        'reply_message',
         'status',
     ];
 
@@ -27,5 +28,10 @@ class Inquiry extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
     }
 }

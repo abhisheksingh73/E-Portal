@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Scheme;
 use App\Models\Article;
 use App\Models\Inquiry;
+use App\Models\Message;
 use App\Models\Cart;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,6 +77,20 @@ class BuyerController extends Controller
 
         $products = $query->paginate(12)->withQueryString();
         return view('buyer.marketplace', compact('products'));
+    }
+
+    public function inquiries(Request $request)
+    {
+        $query = Inquiry::where('buyer_id', Auth::id())
+            ->with(['seller', 'product', 'messages'])
+            ->latest();
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $inquiries = $query->paginate(10)->withQueryString();
+        return view('buyer.inquiries', compact('inquiries'));
     }
 
     public function orders(Request $request)
@@ -371,7 +386,7 @@ class BuyerController extends Controller
             'message' => 'required|string',
         ]);
 
-        Inquiry::create([
+        $inquiry = Inquiry::create([
             'buyer_id' => Auth::id(),
             'seller_id' => $request->seller_id,
             'product_id' => $request->product_id,
@@ -379,7 +394,36 @@ class BuyerController extends Controller
             'status' => 'unread',
         ]);
 
+        // Start the thread
+        Message::create([
+            'inquiry_id' => $inquiry->id,
+            'sender_id' => Auth::id(),
+            'body' => $request->message,
+        ]);
+
         return back()->with('success', 'Your inquiry has been sent to the seller.');
+    }
+
+    public function buyerReply(Request $request, Inquiry $inquiry)
+    {
+        if ($inquiry->buyer_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'message' => 'required|string|max:2000',
+        ]);
+
+        Message::create([
+            'inquiry_id' => $inquiry->id,
+            'sender_id' => Auth::id(),
+            'body' => $request->message,
+        ]);
+
+        // Mark as unread for seller again so they see the follow-up
+        $inquiry->update(['status' => 'unread']);
+
+        return back()->with('success', 'Your follow-up question has been sent!');
     }
 
     public function applyForScheme(Request $request, \App\Models\Scheme $scheme)

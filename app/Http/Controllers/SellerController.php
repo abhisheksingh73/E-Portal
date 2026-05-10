@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\Inquiry;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -212,13 +213,53 @@ class SellerController extends Controller
         return view('seller.settings');
     }
 
-    public function inquiries()
+    public function inquiries(Request $request)
     {
-        $inquiries = Inquiry::where('seller_id', Auth::id())
-            ->with(['buyer', 'product'])
-            ->latest()
-            ->get();
+        $query = Inquiry::where('seller_id', Auth::id())
+            ->with(['buyer', 'product', 'messages'])
+            ->latest();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('message', 'like', '%' . $search . '%')
+                  ->orWhereHas('buyer', function($bq) use ($search) {
+                      $bq->where('name', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $inquiries = $query->paginate(10)->withQueryString();
         return view('seller.inquiries.index', compact('inquiries'));
+    }
+
+    public function replyToInquiry(Request $request, Inquiry $inquiry)
+    {
+        if ($inquiry->seller_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'reply_message' => 'required|string|max:2000',
+        ]);
+
+        $inquiry->update([
+            'reply_message' => $request->reply_message, // Keep for legacy/shortcut
+            'status' => 'replied'
+        ]);
+
+        // Add to threaded conversation
+        Message::create([
+            'inquiry_id' => $inquiry->id,
+            'sender_id' => Auth::id(),
+            'body' => $request->reply_message,
+        ]);
+
+        return back()->with('success', 'Your professional reply has been sent to the buyer!');
     }
 
     public function updateInquiryStatus(Request $request, Inquiry $inquiry)

@@ -60,6 +60,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/schemes', [BuyerController::class, 'schemes'])->name('buyer.schemes');
         Route::post('/schemes/{scheme}/apply', [BuyerController::class, 'applyForScheme'])->name('buyer.schemes.apply');
         Route::get('/articles', [BuyerController::class, 'articles'])->name('buyer.articles');
+        Route::get('/inquiries', [BuyerController::class, 'inquiries'])->name('buyer.inquiries');
+        Route::post('/inquiries/{inquiry}/reply', [BuyerController::class, 'buyerReply'])->name('buyer.inquiries.reply');
         Route::post('/contact', [BuyerController::class, 'contactSeller'])->name('buyer.contact.store');
         Route::get('/wishlist', [BuyerController::class, 'wishlist'])->name('buyer.wishlist');
         Route::post('/wishlist/toggle', [BuyerController::class, 'toggleWishlist'])->name('buyer.wishlist.toggle');
@@ -94,6 +96,7 @@ Route::middleware('auth')->group(function () {
         Route::patch('/orders/{order}/status', [SellerController::class, 'updateOrderStatus'])->name('seller.orders.updateStatus');
         Route::get('/inquiries', [SellerController::class, 'inquiries'])->name('seller.inquiries');
         Route::patch('/inquiries/{inquiry}/status', [SellerController::class, 'updateInquiryStatus'])->name('seller.inquiries.updateStatus');
+        Route::post('/inquiries/{inquiry}/reply', [SellerController::class, 'replyToInquiry'])->name('seller.inquiries.reply');
         Route::get('/earnings', [SellerController::class, 'earnings'])->name('seller.earnings');
         Route::get('/settings', [SellerController::class, 'settings'])->name('seller.settings');
         Route::get('/schemes', [SellerController::class, 'schemes'])->name('seller.schemes');

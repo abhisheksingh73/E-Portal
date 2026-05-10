@@ -23,6 +23,10 @@
         <i class="fas fa-heart"></i>
         <span>Wishlist</span>
     </a>
+    <a href="{{ route('buyer.inquiries') }}" class="nav-item">
+        <i class="fas fa-comments"></i>
+        <span>My Inquiries</span>
+    </a>
     <a href="{{ route('buyer.articles') }}" class="nav-item active">
         <i class="fas fa-bullhorn"></i>
         <span>Textile Articles</span>

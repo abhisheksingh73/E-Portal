@@ -117,7 +117,7 @@
                                 <input type="hidden" name="status" value="read">
                                 <button type="submit" style="background: #f1f5f9; color: #1e293b; border: none; padding: 8px; border-radius: 8px; cursor: pointer;" title="Mark as Read"><i class="fas fa-check"></i></button>
                             </form>
-                            <button onclick="alert('Inquiry Message:\n\n{{ addslashes($inquiry->message) }}')" style="background: #1a2a6c; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">View & Reply</button>
+                            <button onclick="openReplyModal({{ json_encode($inquiry) }}, '{{ $inquiry->buyer->name }}')" style="background: #1a2a6c; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">View & Reply</button>
                         </div>
                     </td>
                 </tr>
@@ -132,4 +132,88 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Reply Modal -->
+    <div id="replyModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: white; width: 650px; max-height: 90vh; border-radius: 28px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative; display: flex; flex-direction: column;">
+            <button onclick="document.getElementById('replyModal').style.display='none'" style="position: absolute; top: 24px; right: 24px; background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;"><i class="fas fa-times"></i></button>
+            
+            <div style="margin-bottom: 24px;">
+                <h2 style="font-size: 1.75rem; font-weight: 800; color: #1a2a6c; margin-bottom: 4px;">Inquiry Thread</h2>
+                <p style="color: #64748b; font-size: 0.95rem;">Buyer: <b id="replyBuyerName"></b></p>
+            </div>
+
+            <!-- Chat Area -->
+            <div id="sellerChatMessages" style="flex: 1; overflow-y: auto; padding: 20px; background: #f8fafc; border-radius: 20px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+                <!-- Messages will be injected here -->
+            </div>
+
+            <form id="replyForm" method="POST" style="margin-top: auto;">
+                @csrf
+                <div style="display: flex; gap: 12px; align-items: flex-end;">
+                    <textarea name="reply_message" id="reply_message" required rows="3" placeholder="Type your response to the buyer..." style="flex: 1; padding: 16px; border-radius: 16px; border: 1px solid #e2e8f0; outline: none; font-family: inherit; font-size: 0.95rem; resize: none; min-height: 80px;"></textarea>
+                    <button type="submit" style="background: #1a2a6c; color: white; border: none; width: 50px; height: 50px; border-radius: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openReplyModal(inquiry, buyerName) {
+            document.getElementById('replyBuyerName').innerText = buyerName;
+            const chatContainer = document.getElementById('sellerChatMessages');
+            chatContainer.innerHTML = '';
+            
+            // Set form action
+            document.getElementById('replyForm').action = `/seller/inquiries/${inquiry.id}/reply`;
+
+            const messages = inquiry.messages || [];
+            
+            if (messages.length === 0) {
+                // Fallback for older data
+                addMessageToSellerChat(inquiry.message, 'buyer', inquiry.created_at);
+                if (inquiry.reply_message) {
+                    addMessageToSellerChat(inquiry.reply_message, 'seller', inquiry.updated_at);
+                }
+            } else {
+                messages.forEach(msg => {
+                    const type = msg.sender_id == {{ auth()->id() }} ? 'seller' : 'buyer';
+                    addMessageToSellerChat(msg.body, type, msg.created_at);
+                });
+            }
+            
+            document.getElementById('replyModal').style.display = 'flex';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function addMessageToSellerChat(text, type, time) {
+            const container = document.getElementById('sellerChatMessages');
+            const msgDiv = document.createElement('div');
+            
+            const isSeller = type === 'seller';
+            const bgColor = isSeller ? '#1a2a6c' : '#ffffff';
+            const textColor = isSeller ? '#ffffff' : '#1e293b';
+            const align = isSeller ? 'flex-end' : 'flex-start';
+            const border = isSeller ? 'none' : '1px solid #e2e8f0';
+            const date = new Date(time).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            msgDiv.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                align-self: ${align};
+                max-width: 80%;
+            `;
+
+            msgDiv.innerHTML = `
+                <div style="background: ${bgColor}; color: ${textColor}; padding: 14px 18px; border-radius: 18px; border-bottom-${isSeller ? 'right' : 'left'}-radius: 4px; border: ${border}; font-size: 0.95rem; line-height: 1.5; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+                    ${text}
+                </div>
+                <span style="font-size: 0.65rem; color: #94a3b8; margin-top: 6px; align-self: ${align}; font-weight: 600;">${date}</span>
+            `;
+
+            container.appendChild(msgDiv);
+        }
+    </script>
 @endsection
