@@ -61,7 +61,7 @@
                     <div style="border: 2px dashed #e2e8f0; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; transition: border-color 0.3s;" onmouseover="this.style.borderColor='#1a2a6c'" onmouseout="this.style.borderColor='#e2e8f0'" onclick="document.getElementById('image-upload').click()">
                         <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #94a3b8; margin-bottom: 8px;"></i>
                         <p style="margin: 0; color: #64748b; font-size: 0.9rem;">Click to upload or drag and drop</p>
-                        <p style="margin: 4px 0 0; color: #94a3b8; font-size: 0.8rem;">PNG, JPG, GIF up to 2MB</p>
+                        <p style="margin: 4px 0 0; color: #94a3b8; font-size: 0.8rem;">PNG, JPG, WEBP, GIF up to 2MB</p>
                         <input type="file" id="image-upload" name="image" accept="image/*" style="display: none;" onchange="previewImage(this)">
                     </div>
                     <div id="image-preview-container" style="display: none; margin-top: 12px;">

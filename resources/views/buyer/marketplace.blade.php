@@ -70,7 +70,7 @@
                         'Woolen' => 'https://images.unsplash.com/photo-1444312645910-ffa973656eba?auto=format&fit=crop&q=80&w=600',
                         'Hand-dyed' => 'https://images.unsplash.com/photo-1528642463367-12acd4974751?auto=format&fit=crop&q=80&w=600',
                     ];
-                    $displayImage = $product->image ? asset('storage/' . $product->image) : ($categoryImages[$product->category] ?? 'https://images.unsplash.com/photo-1620783770629-1225728a6c32?auto=format&fit=crop&q=80&w=600');
+                    $displayImage = $product->image ? (str_starts_with($product->image, 'http') ? $product->image : asset('storage/' . $product->image)) : ($categoryImages[$product->category] ?? 'https://images.unsplash.com/photo-1620783770629-1225728a6c32?auto=format&fit=crop&q=80&w=600');
                 @endphp
                 <img src="{{ $displayImage }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                 <div style="position: absolute; top: 15px; left: 15px; background: rgba(26, 42, 108, 0.9); color: white; padding: 5px 15px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; backdrop-filter: blur(4px);">{{ $product->category }}</div>

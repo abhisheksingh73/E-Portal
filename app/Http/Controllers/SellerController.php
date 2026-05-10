@@ -63,12 +63,12 @@ class SellerController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'category' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('products', 'public');
+            $imagePath = $this->uploadImage($request->file('image'));
         }
 
         $product = Product::create([
@@ -111,17 +111,21 @@ class SellerController extends Controller
             'price' => 'required|numeric|min:0',
             'category' => 'required|string',
             'status' => 'required|in:active,out_of_stock,pending',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
         ]);
 
         $data = $request->only(['name', 'description', 'price', 'category', 'status']);
 
         if ($request->hasFile('image')) {
-            // Delete old image
-            if ($product->image) {
+            // New image upload
+            $newImagePath = $this->uploadImage($request->file('image'));
+            
+            // Delete old local image if it exists
+            if ($product->image && !str_starts_with($product->image, 'http')) {
                 Storage::disk('public')->delete($product->image);
             }
-            $data['image'] = $request->file('image')->store('products', 'public');
+            
+            $data['image'] = $newImagePath;
         }
 
         $data['is_featured'] = $request->has('is_featured');
@@ -233,6 +237,52 @@ class SellerController extends Controller
     {
         $schemes = \App\Models\Scheme::where('status', 'active')->latest()->get();
         return view('seller.schemes', compact('schemes'));
+    }
+
+    private function uploadImage($file)
+    {
+        $cloudinaryUrl = env('CLOUDINARY_URL');
+        
+        if ($cloudinaryUrl) {
+            try {
+                // Parse cloudinary://key:secret@cloudname
+                $url = str_replace('cloudinary://', '', $cloudinaryUrl);
+                $parts = explode('@', $url);
+                $auth = explode(':', $parts[0]);
+                $cloudName = $parts[1];
+                $apiKey = $auth[0];
+                $apiSecret = $auth[1];
+
+                $timestamp = time();
+                $signature = sha1("timestamp={$timestamp}{$apiSecret}");
+                
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, "https://api.cloudinary.com/v1_1/{$cloudName}/image/upload");
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, [
+                    'file' => new \CURLFile($file->getRealPath()),
+                    'timestamp' => $timestamp,
+                    'api_key' => $apiKey,
+                    'signature' => $signature,
+                    'folder' => 'products'
+                ]);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                
+                $response = curl_exec($ch);
+                curl_close($ch);
+                
+                $result = json_decode($response, true);
+                
+                if (isset($result['secure_url'])) {
+                    return $result['secure_url'];
+                }
+            } catch (\Exception $e) {
+                // Fallback to local if Cloudinary fails
+            }
+        }
+        
+        // Default Local Storage fallback
+        return $file->store('products', 'public');
     }
 
     public function articles()

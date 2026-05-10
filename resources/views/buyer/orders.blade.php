@@ -73,7 +73,7 @@
             <div style="padding: 32px; display: flex; gap: 24px; align-items: center;">
                 <div style="width: 100px; height: 100px; background: #f1f5f9; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                     @if($order->product->image)
-                        <img src="{{ asset('storage/' . $order->product->image) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ str_starts_with($order->product->image, 'http') ? $order->product->image : asset('storage/' . $order->product->image) }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
                         <i class="fas fa-image" style="font-size: 2rem; color: #cbd5e1;"></i>
                     @endif
