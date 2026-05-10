@@ -57,8 +57,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/marketplace', [BuyerController::class, 'marketplace'])->name('buyer.marketplace');
         Route::get('/orders', [BuyerController::class, 'orders'])->name('buyer.orders');
         Route::post('/orders', [BuyerController::class, 'placeOrder'])->name('buyer.orders.store');
-        Route::get('/schemes', [BuyerController::class, 'schemes'])->name('buyer.schemes');
-        Route::post('/schemes/{scheme}/apply', [BuyerController::class, 'applyForScheme'])->name('buyer.schemes.apply');
         Route::get('/articles', [BuyerController::class, 'articles'])->name('buyer.articles');
         Route::get('/inquiries', [BuyerController::class, 'inquiries'])->name('buyer.inquiries');
         Route::post('/inquiries/{inquiry}/reply', [BuyerController::class, 'buyerReply'])->name('buyer.inquiries.reply');

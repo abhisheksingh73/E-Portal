@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Scheme;
 use App\Models\Article;
+use App\Models\Order;
+use App\Models\Inquiry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -87,7 +89,7 @@ class AdminController extends Controller
 
     public function orders(Request $request)
     {
-        $query = Order::with(['product', 'buyer'])->latest();
+        $query = Order::with(['product.seller', 'buyer'])->latest();
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -183,11 +185,7 @@ class AdminController extends Controller
         return redirect()->route('admin.products')->with('success', 'Product deleted successfully!');
     }
 
-    public function orders()
-    {
-        $orders = \App\Models\Order::with(['product', 'buyer', 'product.seller'])->latest()->get();
-        return view('admin.orders.index', compact('orders'));
-    }
+
 
     public function showOrder(\App\Models\Order $order)
     {
